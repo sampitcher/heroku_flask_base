@@ -2,31 +2,21 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>mappa</h2>
+    <h2>park run stats</h2>
 
-    <p>this is a web app designed to allow you to select a photo and a strava activity</p>
-    <p>mappa will produce an instagram friendly image with your stats merged onto your photo</p>
+    <p>this is a web app designed to allow you to check out your park run stats</p>
 
     {% if current_user.is_anonymous %}
     <p>Please login to use mappa</p>
     <a href="{{ url_for('login') }}">login</a>
     {% else %}
-    <p>Please click below to use mappa</p>
-    <a href="{{ url_for('mappa') }}">mappa</a>
+    {% if strava_code is none %}
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://park-run-stats.herokuapp.com/getstravacode&approval_prompt=force">Connect to Strava</a>
+    {% else %}
+    <p>Please click below to see your profile</p>
+    <a href="{{ url_for('user', username=current_user.username) }}">profile</a>
+    {% endif %}
     {% endif %}
 </div>
 
 {% endblock %}
-
-
-
-
-
-
-    <h3>Please upload your chosen photo</h3>
-    <p>* mappa currently only works with square photos</p>
-
-    <form method = "POST" action = "/uploader" enctype = "multipart/form-data">
-       <input type = "file" name = "file" />
-       <input type = "submit"/>
-    </form>

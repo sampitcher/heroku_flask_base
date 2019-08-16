@@ -91,7 +91,7 @@ def getstravacode():
     db.session.commit()
 
     strava_code = current_user.strava_code
-    return render_template("upload_connect_strava.html", strava_code=strava_code)
+    return render_template("index.html", strava_code=strava_code)
 
 @app.route('/sync', methods = ['GET', 'POST'])
 @login_required
