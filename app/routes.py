@@ -7,7 +7,7 @@ from app.models import User, Activity
 import time
 import json
 
-from app.strava_api import get_activities as gatcs, get_activity_streams as gas, get_activity as gact
+from app.strava_api import get_activities as gatcs, get_activity_streams as gas, get_activity as gact, get_park_run_activities as gpra
 from app import mappa_run
 
 # def save_data(data_dict):
@@ -174,6 +174,92 @@ def sync():
         db.session.commit()
 
     return render_template("upload_connect_strava.html")
+
+@app.route('/syncpr', methods = ['GET', 'POST'])
+@login_required
+def syncpr():
+    # delete activities first
+    activities_delete = Activity.query.filter_by(author=current_user)
+    for act in activities_delete:
+        db.session.delete(act)
+    db.session.commit()
+    
+    # reupload last 10 activities
+    strava_code = current_user.strava_code
+    timenow = current_user.timenow
+
+    print(strava_code)
+
+    activities = gpra(strava_code)
+
+    print(activities)
+
+    for i in range(len(activities)):
+        activity_id = activities[i]['act_id']
+        print(activity_id)
+        name = activities[i]['name']
+        print(name)
+        name_id = '{}_{}_{}'.format(name,activity_id,timenow)
+
+        try:
+            elevation = activities[i]['elevation']
+            print(elevation)
+        except:
+            elevation = '0'
+
+        try:
+            distance = activities[i]['distance']
+            print(distance)
+        except:
+            distance = '0'
+
+        try:
+            duration = activities[i]['moving_time']
+            print(duration)
+        except:
+            duration = '0'
+
+        try:
+            max_speed = activities[i]['max_speed']
+            print(max_speed)
+        except:
+            max_speed = '0'
+
+        try:
+            avg_speed = activities[i]['average_speed']
+            print(avg_speed)
+        except:
+            avg_speed = '0'
+
+        try:
+            max_power = activities[i]['max_power']
+            print(max_power)
+        except:
+            max_power = '0'
+
+        try:
+            avg_power = activities[i]['avg_power']
+            print(avg_power)
+        except:
+            avg_power = '0'
+
+        try:
+            max_heartrate = activities[i]['max_heartrate']
+            print(max_heartrate)
+        except:
+            max_heartrate = '0'
+
+        try:
+            avg_heartrate = activities[i]['average_heartrate']
+            print(avg_heartrate)
+        except:
+            avg_heartrate = '0'
+
+        activity = Activity(name=name, activity_id=activity_id, elevation=elevation, distance=distance, duration=duration, max_speed=max_speed, avg_speed=avg_speed, max_power=max_power, avg_power=avg_power, max_heartrate=max_heartrate, avg_heartrate=avg_heartrate, name_id=name_id, author=current_user)
+        db.session.add(activity)
+        db.session.commit()
+
+    return render_template('index.html', user=user, activities=activities)
 
 @app.route('/delete', methods = ['GET', 'POST'])
 @login_required

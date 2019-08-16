@@ -3,6 +3,8 @@ import json
 import pandas as pd
 # from google.cloud import bigquery
 from pprint import pprint
+import re
+import datetime
 # from google.cloud import storage
 session = requests.Session()
 
@@ -40,32 +42,92 @@ def auth_strava():
 code = "6c9f0e1a12c202de122ac6ecc13b0d760c4489ce"
 
 
-def get_activities(page_number,code):
+def get_activities(page_number,code, per_page=10):
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}&code={}&grant_type=authorization_code".format(client_id, client_secret, code)
 
     r = session.post(auth_url_2)
     access_token = r.json()['access_token']
     session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
 
-    r = session.get("{}/athlete/activities".format(base_url), params={'per_page': 10, 'page': page_number})
+    r = session.get("{}/athlete/activities".format(base_url), params={'per_page': per_page, 'page': page_number})
 
     activities = r.json()
 
     # with open('activities2_{}.json'.format(page_number), 'w') as f:
         # f.write(json.dumps(activities))
 
-    pprint(activities)
+    # pprint(activities)
     # return(len(activities))
     return(activities)
 
 # get_activities(1)
 # get_activity(2197549388)
 
-if __name__ == '__main__':
-    # n = get_activity_streams(2344637194)
-    # pprint(n['activities'])
-    # all_activities_to_csv()
-    get_activities(1,"a679a5b774c0ebe344c081c10a5ceaea03280ce8")
+# if __name__ == '__main__':
+#     # n = get_activity_streams(2344637194)
+#     # pprint(n['activities'])
+#     # all_activities_to_csv()
+#     get_activities(1,"a679a5b774c0ebe344c081c10a5ceaea03280ce8")
+
+def get_park_run_activities(code):
+    activity_array = []
+    parkrun_array = []
+    for i in range(10):
+        data = get_activities(i+1,code, 200)
+        for j in range(len(data)):
+            activity_array.append(data[j])
+
+    print(len(activity_array))
+
+    for i in range(len(activity_array)):
+        act_id = activity_array[i]['id']
+        name = activity_array[i]['name']
+        start_timestamp = activity_array[i]['start_date_local']
+        act_type = activity_array[i]['type']
+        distance = activity_array[i]['distance']
+        elapsed_time = activity_array[i]['elapsed_time']
+        moving_time = activity_array[i]['moving_time']
+        start_date = re.search("(\d*-\d*-\d*)", start_timestamp).group()
+        start_time = re.search("(\d*:\d*:\d*)", start_timestamp).group()
+        timestamp_str = start_date+' '+start_time
+
+        timetime = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+        day_of_week = timetime.weekday()
+        time = timetime.time()
+        hour = time.hour
+        minute = time.minute
+        # print(timetime.weekday())
+
+        activity_info_json = {}
+
+        # print("{} {}".format(name, day_of_week))
+
+        activity_info_json['act_id'] = act_id
+        activity_info_json['name'] = name
+        activity_info_json['day_of_week'] = day_of_week
+        activity_info_json['time'] = time
+        activity_info_json['start_timestamp'] = start_timestamp
+        activity_info_json['act_type'] = act_type
+        activity_info_json['distance'] = distance
+        activity_info_json['elapsed_time'] = elapsed_time
+        activity_info_json['moving_time'] = moving_time
+
+        if day_of_week == 5 and act_type == 'Run' and distance > 4600 and distance < 5400:
+            if hour == 8 and minute > 55:
+                parkrun_array.append(activity_info_json)
+            elif hour == 9 and minute < 15:
+                parkrun_array.append(activity_info_json)
+            else:
+                None
+        else:
+            None
+
+    # for i in range(len(parkrun_array)):
+    #     print(parkrun_array[i])
+
+    print(len(activity_array))
+    print(activity_array)
+    return(parkrun_array)
 
 def get_activity(activity_id,code):
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}&code={}&grant_type=authorization_code".format(client_id, client_secret, code)
