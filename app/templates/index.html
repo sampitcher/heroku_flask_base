@@ -10,7 +10,7 @@
     <p>Please login to use mappa</p>
     <a href="{{ url_for('login') }}">login</a>
     {% else %}
-    {% if strava_code is none %}
+    {% if current_user.strava_code is none %}
     <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://park-run-stats.herokuapp.com/getstravacode&approval_prompt=force">Connect to Strava</a>
     {% else %}
     <p>Please click below to see your profile</p>
