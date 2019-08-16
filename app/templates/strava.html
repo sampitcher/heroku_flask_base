@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+</head>
+  <body>
+    <div>
+
+  	<h2>mappa</h2>
+  	
+  	<p>{{filename}} has been succesfully uploaded</p>
+
+  	<h3>Please submit your strava activity id</h3>
+
+    <form method="POST" action="/strava">
+        <select name="activity_id">
+          {% for i in blank_array %}
+          <option value="{{ activity_ids[i] }}">{{ activity_names[i] }}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" value="submit" onclick="$('#loading').show();">
+    </form>
+
+    <div id="loading" style="display:none;">
+    	<p>Please wait while your image is loading ...</p>
+    	<img src="static/loading.gif" width=200px height=200px alt="" />
+    </div>
+
+  <img src ="/static/img/image_{{ base_image }}_{{ activity_id }}_{{ timenow }}.png" width="500" height="500">
+
+
+  </body>
+</div>
+{% endblock %}

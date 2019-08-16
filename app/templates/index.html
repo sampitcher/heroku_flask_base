@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h2>mappa</h2>
+
+    <p>this is a web app designed to allow you to select a photo and a strava activity</p>
+    <p>mappa will produce an instagram friendly image with your stats merged onto your photo</p>
+
+    {% if current_user.is_anonymous %}
+    <p>Please login to use mappa</p>
+    <a href="{{ url_for('login') }}">login</a>
+    {% else %}
+    <p>Please click below to use mappa</p>
+    <a href="{{ url_for('mappa') }}">mappa</a>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+    <h3>Please upload your chosen photo</h3>
+    <p>* mappa currently only works with square photos</p>
+
+    <form method = "POST" action = "/uploader" enctype = "multipart/form-data">
+       <input type = "file" name = "file" />
+       <input type = "submit"/>
+    </form>
