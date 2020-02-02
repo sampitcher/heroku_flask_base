@@ -101,12 +101,18 @@ def sync():
     expires_at = user.expires_at
 
     # delete activities first
-    activities_delete = Activity.query.filter_by(author=current_user)
-    for act in activities_delete:
-        db.session.delete(act)
-    db.session.commit()
+    # activities_delete = Activity.query.filter_by(author=current_user)
+    # for act in activities_delete:
+    #     db.session.delete(act)
+    # db.session.commit()
 
-    print('Activities have been deleted from database')
+    # print('Activities have been deleted from database')
+
+    # activities_from_database = Activity.query.filter_by(author=current_user)
+
+    # max_logins = db.session.query(db.func.max(Activity.numLogins)).scalar()
+
+    
 
     activities = get_acts(access_token)
 
@@ -115,6 +121,7 @@ def sync():
             activity_id=activity['activity_id'],
             name=activity['name'],
             activity_type=activity['activity_type'],
+            epoch=activity['epoch'],
             timenow=activity['timenow'],
             timestamp=activity['timestamp'],
             user_id=activity['user_id'],
@@ -132,7 +139,7 @@ def sync():
         db.session.add(activity)
         db.session.commit()
 
-    # print(activities)
+    print(activities)
 
     return render_template("index.html", user=user)
 

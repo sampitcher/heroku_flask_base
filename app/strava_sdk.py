@@ -2,6 +2,7 @@ import requests
 import json
 from pprint import pprint
 import time
+import datetime
 
 session = requests.Session()
 
@@ -61,26 +62,24 @@ def get_tokens_with_refresh_token(refresh_token):
 
 
 
-def get_activities(access_token):
+def get_activities(access_token, max_time=0):
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
 
     r = session.post(auth_url_2)
     session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
 
     activities_array = []
-    for page in range(10):
-        page = page + 1
-        print(f'Getting page {page} from Strava')
-        r = session.get("{}/athlete/activities".format(base_url), params={'per_page': 150, 'page': page})
+    print(f'Getting activities from Strava')
+    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 20, 'page': 1})
 
-        activities_raw = r.json()
+    activities_raw = r.json()
 
-        for i in range(150):
-            try:
-                print(f'Getting Activity number {i + 1} from page {page}')
-                activities_array.append(clean_raw_activities(activities_raw[i]))
-            except:
-                pass
+    for i in range(25):
+        try:
+            print(f'Getting Activity number {i + 1} from page')
+            activities_array.append(clean_raw_activities(activities_raw[i]))
+        except:
+            pass
 
         # print(activities_array)
     return(activities_array)
@@ -91,6 +90,7 @@ def clean_raw_activities(i):
     name = i['name']
     activity_type = i['type']
     timestamp = i['start_date']
+    epoch = int(datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
     user_id = i['athlete']['id']
     elevation = i['total_elevation_gain']
     distance = i['distance']
@@ -127,6 +127,7 @@ def clean_raw_activities(i):
         "activity_id": activity_id,
         "name": name,
         "activity_type": activity_type,
+        "epoch": epoch,
         "timenow": timenow,
         "timestamp": timestamp,
         "user_id": user_id,
@@ -146,3 +147,27 @@ def clean_raw_activities(i):
 # access_token = "eed5d24b524b46e824c5aa7f7e53653495ca284d"
 # code = "9995da9c388571e3960e663b018251c282c9d7b7"
 # get_activities(1,access_token)
+
+# def get_activities(access_token):
+#     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
+
+#     r = session.post(auth_url_2)
+#     session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
+
+#     activities_array = []
+#     for page in range(10):
+#         page = page + 1
+#         print(f'Getting page {page} from Strava')
+#         r = session.get("{}/athlete/activities".format(base_url), params={'after': 0, 'per_page': 20, 'page': page})
+
+#         activities_raw = r.json()
+
+#         for i in range(20):
+#             try:
+#                 print(f'Getting Activity number {i + 1} from page {page}')
+#                 activities_array.append(clean_raw_activities(activities_raw[i]))
+#             except:
+#                 pass
+
+#         # print(activities_array)
+#     return(activities_array)
