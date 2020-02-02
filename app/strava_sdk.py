@@ -63,6 +63,9 @@ def get_tokens_with_refresh_token(refresh_token):
 
 
 def get_activities(access_token, max_time=0):
+    if max_time is None:
+        max_time = 0
+
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
 
     r = session.post(auth_url_2)
@@ -70,7 +73,7 @@ def get_activities(access_token, max_time=0):
 
     activities_array = []
     print(f'Getting activities from Strava')
-    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 20, 'page': 1})
+    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 50, 'page': 1})
 
     activities_raw = r.json()
 

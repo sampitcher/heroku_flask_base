@@ -110,11 +110,12 @@ def sync():
 
     # activities_from_database = Activity.query.filter_by(author=current_user)
 
-    # max_logins = db.session.query(db.func.max(Activity.numLogins)).scalar()
+    max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
+    print(max_epoch)
 
     
 
-    activities = get_acts(access_token)
+    activities = get_acts(access_token, max_epoch)
 
     for activity in activities:
         activity = Activity(
@@ -152,5 +153,5 @@ def delete():
         db.session.delete(act)
     db.session.commit()
 
-    return render_template("upload_connect_strava.html")
+    return render_template("index.html")
 
