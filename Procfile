@@ -1,1 +1,1 @@
-web: flask db upgrade; flask translate compile; gunicorn mappa_app:app
+web: flask db upgrade; flask translate compile; gunicorn strava_heroku:app

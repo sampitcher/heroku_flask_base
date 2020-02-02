@@ -1,3 +1,7 @@
+<head>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
@@ -7,14 +11,13 @@
 {% block navbar %}
     <nav class="navbar navbar-default">
         <div>
-        mappa:
+        links:
         <a href="{{ url_for('index') }}">Home</a>
         {% if current_user.is_anonymous %}
         <a href="{{ url_for('login') }}">Login</a>
         {% else %}
         <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-        <a href="{{ url_for('syncpr') }}">SYNC</a>
         {% endif %}
     </div>
     </nav>

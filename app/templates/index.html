@@ -2,20 +2,35 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>park run stats</h2>
-
-    <p>this is a web app designed to allow you to check out your park run stats</p>
+    <h2>strava postgres</h2>
 
     {% if current_user.is_anonymous %}
-    <p>Please login to use mappa</p>
+
+    <p>Please login to use the app</p>
     <a href="{{ url_for('login') }}">login</a>
+
     {% else %}
-    {% if current_user.strava_code is none %}
-    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://park-run-stats.herokuapp.com/getstravacode&approval_prompt=force">Connect to Strava</a>
-    {% else %}
-    <p>Please click below to see your profile</p>
-    <a href="{{ url_for('user', username=current_user.username) }}">profile</a>
-    {% endif %}
+
+        {% if current_user.strava_code is none %}
+
+    <p>Connect for heroku app
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&approval_prompt=force">Connect to Strava</a></p>
+    <p>Connect for local app
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://localhost:5000/getstravacode&approval_prompt=force">Connect to Strava Local</a></p>
+
+    <p>Connect for heroku app test
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">Connect to Strava Local test</a></p>
+    <p>Connect for local app test
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://localhost:5000/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">Connect to Strava Local test</a></p>
+
+        {% else %}
+
+    <p>Links below</p>
+    <p><a href="{{ url_for('user', username=current_user.username) }}">profile</a></p>
+    <p><a href="{{ url_for('sync') }}">sync data</a></p>
+
+        {% endif %}
+
     {% endif %}
 </div>
 
