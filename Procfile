@@ -1,1 +1,1 @@
-web: flask db upgrade; gunicorn strava_heroku_app:app
+web: flask db migrate; gunicorn strava_heroku_app:app
