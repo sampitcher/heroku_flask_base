@@ -122,7 +122,7 @@ def sync():
             name=activity['name'],
             activity_type=activity['activity_type'],
             epoch=activity['epoch'],
-            timenow=activity['timenow'],
+            # timenow=activity['timenow'],
             timestamp=activity['timestamp'],
             user_id=activity['user_id'],
             elevation=activity['elevation'],

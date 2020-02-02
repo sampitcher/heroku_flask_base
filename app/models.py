@@ -36,8 +36,6 @@ class Activity(db.Model):
     activity_id = db.Column(db.String(140))
     name = db.Column(db.String(140))
     activity_type = db.Column(db.String(64))
-    # timenow = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    # timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     epoch = db.Column(db.Integer)
     timenow = db.Column(db.String(140))
     timestamp = db.Column(db.String(140))
