@@ -7,14 +7,40 @@ from app.models import User, Activity
 import time
 import json
 
-from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts
+from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts
+from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
+
+def get_access_token():
+    username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    expires_at = int(user.expires_at)
+    refresh_token = user.refresh_token
+    time_now = time.time()
+
+    if(expires_at<time_now):
+        print('Access Token is not valid, need to refresh token...')
+        access_token, refresh_token, expires_at = get_tokens_w_rt(refresh_token)
+        user.access_token = access_token
+        user.refresh_token = refresh_token
+        user.expires_at = expires_at
+        db.session.commit()
+
+    access_token = user.access_token
+    refresh_token = user.refresh_token
+    expires_at = user.expires_at
+
+    return(access_token)
 
 @app.route('/')
 
 @app.route('/index')
 @login_required
 def index():
-    return render_template('index.html', title='Home')
+    user = pbl_get_user()
+    embed_url = pbl_generate(user)
+    print(embed_url)
+    # embed_url = 'www.url.com'
+    return render_template('index.html', title='Home', embed_url=embed_url)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -76,44 +102,18 @@ def getstravacode():
     user.expires_at = expires_at
     db.session.commit()
 
+    athlete_id = get_ath_id(access_token)
+
     return render_template("index.html", user=user)
 
 
 @app.route('/sync', methods = ['GET', 'POST'])
 @login_required
 def sync():
-    username = current_user.username
-    user = User.query.filter_by(username=username).first()
-    expires_at = int(user.expires_at)
-    refresh_token = user.refresh_token
-    time_now = time.time()
-
-    if(expires_at<time_now):
-        print('Access Token is not valid, need to refresh token...')
-        access_token, refresh_token, expires_at = get_tokens_w_rt(refresh_token)
-        user.access_token = access_token
-        user.refresh_token = refresh_token
-        user.expires_at = expires_at
-        db.session.commit()
-
-    access_token = user.access_token
-    refresh_token = user.refresh_token
-    expires_at = user.expires_at
-
-    # delete activities first
-    # activities_delete = Activity.query.filter_by(author=current_user)
-    # for act in activities_delete:
-    #     db.session.delete(act)
-    # db.session.commit()
-
-    # print('Activities have been deleted from database')
-
-    # activities_from_database = Activity.query.filter_by(author=current_user)
+    access_token = get_access_token()
 
     max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
     print(max_epoch)
-
-    
 
     activities = get_acts(access_token, max_epoch)
 
@@ -142,6 +142,12 @@ def sync():
 
     print(activities)
 
+    # username = current_user.username
+    # user = User.query.filter_by(username=username).first()
+    # athlete_id = user.athlete_id
+
+    # get_num_acts(access_token, athlete_id)
+
     return render_template("index.html", user=user)
 
 
@@ -154,4 +160,18 @@ def delete():
     db.session.commit()
 
     return render_template("index.html")
+
+@app.route("/update_athlete_id", methods=["GET", "POST"])
+@login_required
+def update_athlete_id():
+
+    access_token = get_access_token()
+    athlete_id = get_ath_id(access_token)
+
+    username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    user.athlete_id = athlete_id
+    db.session.commit()
+
+    return render_template("index.html", user=user)
 

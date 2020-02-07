@@ -4,11 +4,16 @@
 <div class="text-center">
 
     <p>Strava Connection Details:</p>
+    {% if current_user.strava_code is none %}
+    {% else %}
+    <p><a href="{{ url_for('sync') }}">sync data</a></p>
+    {% endif %}
 
     <p>User strava code: {{ user.strava_code }} </p>
     <p>User access token: {{ user.access_token }} </p>
     <p>User refresh token: {{ user.refresh_token }} </p>
     <p>User tokens expire at: {{ user.expires_at }} </p>
+    <p>User athlete id: {{ user.athlete_id }} </p>
 
     {% for activity in activities %}
     <p>Name: <b>{{ activity.name }}</b>:  {{ activity.duration }} seconds</p>

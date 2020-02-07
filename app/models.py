@@ -15,6 +15,8 @@ class User(UserMixin, db.Model):
     refresh_token = db.Column(db.String())
     expires_at = db.Column(db.String())
     timenow = db.Column(db.String(128))
+    athlete_id = db.Column(db.Integer)
+    number_of_activities = db.Column(db.Integer)
     activities = db.relationship('Activity', backref='author', lazy='dynamic')
 
     def __repr__(self):
