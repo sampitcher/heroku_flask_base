@@ -31,15 +31,17 @@ def get_access_token():
 
     return(access_token)
 
+def generate_embed_url():
+    user = pbl_get_user()
+    embed_url = pbl_generate(user)
+    return(embed_url)
+
 @app.route('/')
 
 @app.route('/index')
 @login_required
 def index():
-    user = pbl_get_user()
-    embed_url = pbl_generate(user)
-    print(embed_url)
-    # embed_url = 'www.url.com'
+    embed_url = generate_embed_url()
     return render_template('index.html', title='Home', embed_url=embed_url)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -104,7 +106,9 @@ def getstravacode():
 
     athlete_id = get_ath_id(access_token)
 
-    return render_template("index.html", user=user)
+    embed_url = generate_embed_url()
+
+    return render_template("index.html", user=user, embed_url=embed_url)
 
 
 @app.route('/sync', methods = ['GET', 'POST'])
@@ -148,7 +152,9 @@ def sync():
 
     # get_num_acts(access_token, athlete_id)
 
-    return render_template("index.html", user=user)
+    embed_url = generate_embed_url()
+
+    return render_template("index.html", user=user, embed_url=embed_url)
 
 
 @app.route('/delete', methods = ['GET', 'POST'])
@@ -159,7 +165,9 @@ def delete():
         db.session.delete(act)
     db.session.commit()
 
-    return render_template("index.html")
+    embed_url = generate_embed_url()
+
+    return render_template("index.html", embed_url=embed_url)
 
 @app.route("/update_athlete_id", methods=["GET", "POST"])
 @login_required
@@ -173,5 +181,7 @@ def update_athlete_id():
     user.athlete_id = athlete_id
     db.session.commit()
 
-    return render_template("index.html", user=user)
+    embed_url = generate_embed_url()
+
+    return render_template("index.html", user=user, embed_url=embed_url)
 
