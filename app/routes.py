@@ -44,41 +44,102 @@ def index():
     embed_url = generate_embed_url()
     return render_template('index.html', title='Home', embed_url=embed_url)
 
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.username.data).first()
+#         if user is None or not user.check_password(form.password.data):
+#             flash('Invalid username or password')
+#             return redirect(url_for('login'))
+#         login_user(user, remember=form.remember_me.data)
+#         next_page = request.args.get('next')
+#         if not next_page or url_parse(next_page).netloc != '':
+#             next_page = url_for('index')
+#         return redirect(next_page)
+#     return render_template('login.html', title='Sign In', form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    message = ""
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+    if request.form:
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        if user is None or not user.check_password(password):
+            message = 'Invalid username or password!'
+            return render_template('login.html', title='Register', message=message)
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+        # login_user(user, remember=form.remember_me.data)
+        login_user(user)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', message=message)
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+#     form = RegistrationForm()
+#     if form.validate_on_submit():
+#         user = User(username=form.username.data, email=form.email.data)
+#         user.set_password(form.password.data)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash('Congratulations, you are now a registered user!')
+#         return redirect(url_for('login'))
+#     return render_template('register.html', title='Register', form=form)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    message = ""
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+    if request.form:
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        repeat_password = request.form.get('repeat_password')
+
+        if len(username) < 3:
+            message = 'You must enter a username!'
+            return render_template('register.html', title='Register', message=message)
+        if len(email) < 3:
+            message = 'You must enter a email!'
+            return render_template('register.html', title='Register', message=message)
+        if len(password) < 3:
+            message = 'You must enter a password!'
+            return render_template('register.html', title='Register', message=message)
+        if not password == repeat_password:
+            message = "You're passwords must match!"
+            return render_template('register.html', title='Register', message=message)
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            print("success")
+        else:
+            print("exists")
+            message = "This username already exists!"
+            return render_template('register.html', title='Register', message=message)
+            return redirect(url_for('register'))
+        # user = User(username=username, email=email)
+        # user.set_password(form.password.data)
+        # db.session.add(user)
+        # db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title='Register', message=message)
 
 @app.route('/user/<username>')
 @login_required
@@ -185,3 +246,11 @@ def update_athlete_id():
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
+@app.route('/test', methods = ['GET', 'POST'])
+def test():
+    if request.form:
+        username = request.form.get('username')
+        password = request.form.get('password')
+        print(username)
+        print(password)
+    return render_template("test.html", filename='main.css')

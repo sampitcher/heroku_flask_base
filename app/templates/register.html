@@ -1,11 +1,17 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block app_content %}
-    <h1>Register</h1>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form) }}
-        </div>
-    </div>
+{% block content %}
+<div class="login-page">
+  <div class="form">
+  	<p>{{message}}</p>
+    <form class="login-form" method="POST" action="/register">
+      <input type="text" placeholder="username" name="username"/>
+      <input type="text" placeholder="email" name="email"/>
+      <input type="password" placeholder="password" name="password"/>
+      <input type="password" placeholder="repeat password" name="repeat_password"/>
+      <button>register</button>
+      <p class="message">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </form>
+  </div>
+</div>
 {% endblock %}
