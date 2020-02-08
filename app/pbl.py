@@ -149,7 +149,7 @@ def get_embed_user():
         first_name="sam",
         last_name="pitcher",
         permissions=["see_lookml_dashboards", "access_data", "see_looks", "see_user_dashboards", "save_content", "explore"],
-        models=["strava_pg"],
+        models=["strava"],
         group_ids=[],
         external_group_id=""
         # user_attributes=user_attributes
@@ -168,7 +168,7 @@ def generate(user):
 
   fifteen_minutes = 15 * 60
 
-  url = URL(looker, user, fifteen_minutes, "/embed/dashboards/1", force_logout_login=True)
+  url = URL(looker, user, fifteen_minutes, "/embed/dashboards/7", force_logout_login=True)
 
   return("https://" + url.to_string())
 
