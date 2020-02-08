@@ -31,9 +31,9 @@ def get_access_token():
 
     return(access_token)
 
-def generate_embed_url(username):
+def generate_embed_url(username, location):
     user = pbl_get_user(username)
-    embed_url = pbl_generate(user)
+    embed_url = pbl_generate(user, location)
     return(embed_url)
 
 @app.route('/')
@@ -42,11 +42,9 @@ def generate_embed_url(username):
 @login_required
 def index():
     username = current_user.username
-    # user = User.query.filter_by(username=username).first()
-    # username = user.username
-
-    embed_url, embed_url_2 = generate_embed_url(username)
-    return render_template('index.html', title='Home', embed_url=embed_url, embed_url_2=embed_url_2)
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
+    return render_template('index.html', title='Home', embed_url=embed_url)
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
@@ -152,7 +150,11 @@ def user(username):
 
     activities = Activity.query.filter_by(author=current_user)
 
-    return render_template('user.html', user=user, activities=activities)
+    # username = current_user.username
+    location = "looks/5"
+    embed_url = generate_embed_url(username, location)
+
+    return render_template('user.html', user=user, activities=activities, embed_url=embed_url)
 
 @app.route("/getstravacode", methods=["GET", "POST"])
 @login_required

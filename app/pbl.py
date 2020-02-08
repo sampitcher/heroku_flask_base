@@ -163,19 +163,15 @@ def get_embed_user(username="sam-pitcher"):
 #                           #
 #############################
 
-def generate(user):
+def generate(user, location):
   looker = Looker(host, secret)
 
   fifteen_minutes = 15 * 60
 
-  url = URL(looker, user, fifteen_minutes, "/embed/dashboards-next/7", force_logout_login=True)
-  url = "https://" + url.to_string()
+  url = URL(looker, user, fifteen_minutes, f"/embed/{location}", force_logout_login=True)
+  url = "https://" + url.to_string() + "&embed_domain=http://strava-heroku.herokuapp.com"
 
-  url_2 = URL(looker, user, fifteen_minutes, "/embed/dashboards/7", force_logout_login=True)
-  url_2 = "https://" + url_2.to_string()
-  url_2 = url_2 + "&embed_domain=https://strava-heroku.herokuapp.com"
-
-  return(url, url_2)
+  return(url)
 
 
 # generate()
