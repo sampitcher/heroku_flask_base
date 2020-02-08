@@ -31,8 +31,8 @@ def get_access_token():
 
     return(access_token)
 
-def generate_embed_url():
-    user = pbl_get_user()
+def generate_embed_url(username):
+    user = pbl_get_user(username)
     embed_url = pbl_generate(user)
     return(embed_url)
 
@@ -41,7 +41,11 @@ def generate_embed_url():
 @app.route('/index')
 @login_required
 def index():
-    embed_url, embed_url_2 = generate_embed_url()
+    username = current_user.username
+    # user = User.query.filter_by(username=username).first()
+    # username = user.username
+
+    embed_url, embed_url_2 = generate_embed_url(username)
     return render_template('index.html', title='Home', embed_url=embed_url, embed_url_2=embed_url_2)
 
 # @app.route('/login', methods=['GET', 'POST'])

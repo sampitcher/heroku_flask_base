@@ -143,16 +143,16 @@ class URL:
 
 #   return(user)
 
-def get_embed_user():
+def get_embed_user(username="sam-pitcher"):
     user = User(
         id="sam_embed",
         first_name="sam",
         last_name="pitcher",
-        permissions=["see_lookml_dashboards", "access_data", "see_looks", "see_user_dashboards", "save_content", "explore"],
+        permissions=["see_lookml_dashboards", "access_data", "see_looks", "see_user_dashboards", "save_content", "explore", "see_sql"],
         models=["strava"],
         group_ids=[],
-        external_group_id=""
-        # user_attributes=user_attributes
+        external_group_id="",
+        user_attributes={"strava_heroku_username": username}
         # access_filters={'look_events_project': {'allowed_brands': 'Ray-Ban'}}
     )
     return(user)
