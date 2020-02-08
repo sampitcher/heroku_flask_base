@@ -172,8 +172,8 @@ def generate(user):
   url = "https://" + url.to_string()
 
   url_2 = URL(looker, user, fifteen_minutes, "/embed/dashboards/7", force_logout_login=True)
-  url_2 = "https://" + url.to_string()
-  url_2 = url_2 + "&embed_domain=https://https://strava-heroku.herokuapp.com"
+  url_2 = "https://" + url_2.to_string()
+  url_2 = url_2 + "&embed_domain=https://strava-heroku.herokuapp.com"
 
   return(url, url_2)
 
