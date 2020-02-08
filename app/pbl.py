@@ -169,8 +169,10 @@ def generate(user):
   fifteen_minutes = 15 * 60
 
   url = URL(looker, user, fifteen_minutes, "/embed/dashboards/7", force_logout_login=True)
+  url = "https://" + url.to_string()
+  url_2 = url + "&embed_domain=https://parent_domain.com"
 
-  return("https://" + url.to_string())
+  return(url, url_2)
 
 
 # generate()

@@ -41,8 +41,8 @@ def generate_embed_url():
 @app.route('/index')
 @login_required
 def index():
-    embed_url = generate_embed_url()
-    return render_template('index.html', title='Home', embed_url=embed_url)
+    embed_url, embed_url_2 = generate_embed_url()
+    return render_template('index.html', title='Home', embed_url=embed_url, embed_url_2=embed_url_2)
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
