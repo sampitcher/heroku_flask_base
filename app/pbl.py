@@ -169,7 +169,7 @@ def generate(user, location):
   fifteen_minutes = 15 * 60
 
   url = URL(looker, user, fifteen_minutes, f"/embed/{location}", force_logout_login=True)
-  url = "https://" + url.to_string() + "&embed_domain=http://strava-heroku.herokuapp.com"
+  url = "https://" + url.to_string() + "&embed_domain=https://strava-heroku.herokuapp.com"
 
   return(url)
 
