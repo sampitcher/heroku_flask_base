@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, make_response
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
@@ -52,7 +52,19 @@ def running():
     username = current_user.username
     location = "looks/6"
     embed_url = generate_embed_url(username, location)
-    return render_template('running.html', title='Running', embed_url=embed_url)
+    response = make_response(render_template('running.html', title='Running', embed_url=embed_url))
+
+    response.set_cookie('same-site-cookie', 'foo', samesite='Lax');
+    response.set_cookie('cross-site-cookie', 'bar', samesite='Lax', secure=True)
+    return response
+
+# @app.route('/running')
+# @login_required
+# def running():
+#     username = current_user.username
+#     location = "looks/6"
+#     embed_url = generate_embed_url(username, location)
+#     return render_template('running.html', title='Running', embed_url=embed_url)
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
@@ -181,7 +193,9 @@ def getstravacode():
 
     athlete_id = get_ath_id(access_token)
 
-    embed_url = generate_embed_url()
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
@@ -227,7 +241,9 @@ def sync():
 
     # get_num_acts(access_token, athlete_id)
 
-    embed_url = generate_embed_url()
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
@@ -240,7 +256,9 @@ def delete():
         db.session.delete(act)
     db.session.commit()
 
-    embed_url = generate_embed_url()
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", embed_url=embed_url)
 
@@ -256,7 +274,9 @@ def update_athlete_id():
     user.athlete_id = athlete_id
     db.session.commit()
 
-    embed_url = generate_embed_url()
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
