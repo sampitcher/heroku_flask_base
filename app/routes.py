@@ -46,6 +46,14 @@ def index():
     embed_url = generate_embed_url(username, location)
     return render_template('index.html', title='Home', embed_url=embed_url)
 
+@app.route('/running')
+@login_required
+def running():
+    username = current_user.username
+    location = "looks/6"
+    embed_url = generate_embed_url(username, location)
+    return render_template('running.html', title='Running', embed_url=embed_url)
+
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
 #     if current_user.is_authenticated:
