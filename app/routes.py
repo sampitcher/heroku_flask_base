@@ -53,9 +53,20 @@ def running():
     location = "looks/6"
     embed_url = generate_embed_url(username, location)
     response = make_response(render_template('running.html', title='Running', embed_url=embed_url))
+    response.set_cookie('same-site-cookie', 'https://lookersandbox.com', samesite=None);
+    response.set_cookie('cross-site-cookie', 'https://lookersandbox.com', samesite=None, secure=True)
+    return response
 
-    response.set_cookie('same-site-cookie', 'foo', samesite='Lax');
-    response.set_cookie('cross-site-cookie', 'bar', samesite='Lax', secure=True)
+@app.route('/parkrun')
+@login_required
+def parkrun():
+    username = current_user.username
+    location = "dashboards/8"
+    embed_url = generate_embed_url(username, location)
+    response = make_response(render_template('parkrun.html', title='Parkrun', embed_url=embed_url))
+
+    response.set_cookie('same-site-cookie', 'lookersandbox.com', samesite='Lax');
+    response.set_cookie('cross-site-cookie', 'lookersandbox.com', samesite='Lax', secure=True)
     return response
 
 # @app.route('/running')
