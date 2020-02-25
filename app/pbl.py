@@ -145,9 +145,9 @@ class URL:
 
 def get_embed_user(username="sam-pitcher"):
     user = User(
-        id="sam_embed",
-        first_name="sam",
-        last_name="pitcher",
+        id=f"{username}-strava-heroku",
+        first_name=f"{username}-first",
+        last_name=f"{username}-last",
         permissions=["see_lookml_dashboards", "access_data", "see_looks", "see_user_dashboards", "save_content", "explore", "see_sql"],
         models=["strava"],
         group_ids=[],
