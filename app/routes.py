@@ -219,7 +219,6 @@ def sync():
 
     max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
     print(max_epoch)
-    # max_epoch = 0
 
     activities = get_acts(access_token, max_epoch)
 
