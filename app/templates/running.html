@@ -12,15 +12,15 @@
     {% else %}
 
 
-    <p>Links below</p>
+    <!-- <p>Links below</p>
     <p><a href="{{ url_for('user', username=current_user.username) }}">profile</a></p>
-    <p><a href="{{ url_for('sync') }}">sync data</a></p>
+    <p><a href="{{ url_for('sync') }}">sync data</a></p> -->
 
     {% endif %}
 
     <div id="Container" style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
         <iframe id="looker"
-            width="90%" height="90%"
+            width="90%" height="900px"
             src={{embed_url}}
             frameborder="0" allowfullscreen=""
             style="position:relative; top:0; left: 0">

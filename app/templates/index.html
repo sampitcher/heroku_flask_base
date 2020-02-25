@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>strava postgres</h2>
+    <h2>strava summary</h2>
 
     {% if current_user.is_anonymous %}
 
@@ -13,21 +13,21 @@
 
         {% if current_user.strava_code is none %}
 
-    <p>Connect for heroku app
+    <!-- <p>Connect for heroku app
     <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&approval_prompt=force">Connect to Strava</a></p>
     <p>Connect for local app
-    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://localhost:5000/getstravacode&approval_prompt=force">Connect to Strava Local</a></p>
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&response_type=code&redirect_uri=http://localhost:5000/getstravacode&approval_prompt=force">Connect to Strava Local</a></p> -->
 
-    <p>Connect for heroku app test
+    <p>Connect to Strava
     <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">Connect to Strava Local test</a></p>
-    <p>Connect for local app test
-    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://localhost:5000/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">Connect to Strava Local test</a></p>
+    <!-- <p>Connect for local app test
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://localhost:5000/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">Connect to Strava Local test</a></p> -->
 
         {% else %}
 
-    <p>Links below</p>
+    <!-- <p>Links below</p>
     <p><a href="{{ url_for('user', username=current_user.username) }}">profile</a></p>
-    <p><a href="{{ url_for('sync') }}">sync data</a></p>
+    <p><a href="{{ url_for('sync') }}">sync data</a></p> -->
 
         {% endif %}
 
@@ -35,7 +35,7 @@
     <div id="Container"
  style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
  <iframe id="looker"
-  width="90%" height="90%"
+  width="90%" height="900px"
   src={{embed_url}}
   frameborder="0" allowfullscreen=""
   style="position:relative; top:0; left: 0"></iframe>
