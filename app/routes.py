@@ -215,9 +215,10 @@ def getstravacode():
 @app.route('/sync', methods = ['GET', 'POST'])
 @login_required
 def sync():
+    username = current_user.username
     access_token = get_access_token()
 
-    max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
+    max_epoch = db.session.query(db.func.max(Activity.epoch)).filter_by(username=username).scalar()
     print(max_epoch)
 
     activities = get_acts(access_token, max_epoch)
@@ -253,7 +254,6 @@ def sync():
 
     # get_num_acts(access_token, athlete_id)
 
-    username = current_user.username
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
 
