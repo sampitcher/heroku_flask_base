@@ -217,6 +217,7 @@ def getstravacode():
 def sync():
     access_token = get_access_token()
 
+    # This needs to be changed to be per user
     max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
     print(max_epoch)
 
