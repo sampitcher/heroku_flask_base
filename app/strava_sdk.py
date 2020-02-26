@@ -118,6 +118,31 @@ def get_activities(access_token, max_time=0):
         # print(activities_array)
     return(activities_array)
 
+def get_activity(access_token, max_time=0):
+    if max_time is None:
+        max_time = 0
+
+    auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
+
+    r = session.post(auth_url_2)
+    session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
+
+    activities_array = []
+    print(f'Getting activities from Strava')
+    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 30, 'page': 1})
+
+    activities_raw = r.json()
+
+    for i in range(30):
+        try:
+            print(f'Getting Activity number {i + 1} from page')
+            activities_array.append(clean_raw_activities(activities_raw[i]))
+        except:
+            pass
+
+        # print(activities_array)
+    return(activities_array)
+
 def clean_raw_activities(i):
     timenow = time.time()
     activity_id = i['id']
