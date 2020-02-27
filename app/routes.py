@@ -216,10 +216,15 @@ def getstravacode():
 @login_required
 def sync():
     username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    user_id = user.id
     access_token = get_access_token()
+    print(f'user id: {user_id}')
 
-    max_epoch = db.session.query(db.func.max(Activity.epoch)).filter_by(username=username).scalar()
+    max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
+    # max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
     print(max_epoch)
+    print(type(max_epoch))
 
     activities = get_acts(access_token, max_epoch)
 
