@@ -221,13 +221,9 @@ def sync():
     access_token = get_access_token()
     print(f'user id: {user_id}')
 
-<<<<<<< HEAD
     max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
     # max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
-=======
-    # This needs to be changed to be per user
-    max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
->>>>>>> d5c650bd0c34f0ad046d9cecaffafa156c3b3ee6
+
     print(max_epoch)
     print(type(max_epoch))
 
