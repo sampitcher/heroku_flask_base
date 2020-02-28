@@ -118,30 +118,23 @@ def get_activities(access_token, max_time=0):
         # print(activities_array)
     return(activities_array)
 
-def get_activity(access_token, max_time=0):
-    if max_time is None:
-        max_time = 0
+def get_activity(access_token, activity_id):
 
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
 
     r = session.post(auth_url_2)
     session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
 
-    activities_array = []
-    print(f'Getting activities from Strava')
-    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 30, 'page': 1})
+    print(f'Getting activity from Strava')
+    r = session.get(f"{base_url}/activities/{activity_id}")
 
-    activities_raw = r.json()
+    activity_raw = r.json()
 
-    for i in range(30):
-        try:
-            print(f'Getting Activity number {i + 1} from page')
-            activities_array.append(clean_raw_activities(activities_raw[i]))
-        except:
-            pass
+    activity = clean_raw_activities(activity_raw)
 
-        # print(activities_array)
-    return(activities_array)
+    print(activity)
+
+    return(activity)
 
 def clean_raw_activities(i):
     timenow = time.time()
@@ -156,29 +149,29 @@ def clean_raw_activities(i):
     duration = i['moving_time']
 
     try:
-        max_speed = i.max_speed
+        max_speed = i['max_speed']
     except:
         max_speed = 0
     try:
-        avg_speed = i.avg_speed
+        avg_speed = i['avg_speed']
     except:
         avg_speed = 0
 
     try:
-        max_power = i.max_power
+        max_power = i['max_power']
     except:
         max_power = 0
     try:
-        avg_power = i.avg_power
+        avg_power = i['avg_power']
     except:
         avg_power = 0
 
     try:
-        max_heartrate = i.max_heartrate
+        max_heartrate = i['max_heartrate']
     except:
         max_heartrate = 0
     try:
-        avg_heartrate = i.avg_heartrate
+        avg_heartrate = i['avg_heartrate']
     except:
         avg_heartrate = 0
 

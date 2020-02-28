@@ -17,6 +17,12 @@
         </iframe>
     </div>
 
+    <p>Add missing activity:</p>
+    <form method="POST" action="/get_activity">
+        <input type="text" placeholder="activity id" name="activity_id"/>
+        <button>add activity</button>
+    </form>
+
     <p>Strava Connection Details:</p>
     <p>User strava code: {{ user.strava_code }} </p>
     <p>User access token: {{ user.access_token }} </p>

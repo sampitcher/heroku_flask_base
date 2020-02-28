@@ -7,7 +7,7 @@ from app.models import User, Activity
 import time
 import json
 
-from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts
+from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
 
 def get_access_token():
@@ -264,6 +264,21 @@ def sync():
     embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
+
+@app.route('/get_activity', methods = ['GET', 'POST'])
+@login_required
+def get_activity():
+    if request.form:
+        activity_id = request.form.get('activity_id')
+
+    access_token = get_access_token()
+    get_act(access_token, activity_id)
+
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
+
+    return render_template("index.html", embed_url=embed_url)
 
 
 @app.route('/delete', methods = ['GET', 'POST'])
