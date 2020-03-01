@@ -248,6 +248,10 @@ def sync():
             max_heartrate=activity['max_heartrate'],
             avg_heartrate=activity['avg_heartrate'],
             is_commute=activity['is_commute'],
+            start_lat=activity['start_lat'],
+            start_lng=activity['start_lng'],
+            end_lat=activity['end_lat'],
+            end_lng=activity['end_lng'],
             name_id=activity['name']+'_'+str(activity['activity_id']),
             author=current_user)
         db.session.add(activity)
