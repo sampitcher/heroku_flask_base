@@ -247,6 +247,7 @@ def sync():
             avg_power=activity['avg_power'],
             max_heartrate=activity['max_heartrate'],
             avg_heartrate=activity['avg_heartrate'],
+            is_commute=activity['is_commute'],
             name_id=activity['name']+'_'+str(activity['activity_id']),
             author=current_user)
         db.session.add(activity)
