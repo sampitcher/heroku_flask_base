@@ -132,9 +132,36 @@ def get_activity(access_token, activity_id):
 
     activity = clean_raw_activities(activity_raw)
 
+    print('Raw Activity json:')
+    print(activity_raw)
+    print('----')
+    print('Cleaned Activity json:')
     print(activity)
 
     return(activity)
+
+def get_activity_laps(access_token, activity_id):
+
+    auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
+
+    r = session.post(auth_url_2)
+    session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
+
+    print(f'Getting activity from Strava')
+    r = session.get(f"{base_url}/activities/{activity_id}/laps")
+
+    activity_laps_raw = r.json()
+
+    # activity = clean_raw_activities(activity_laps_raw)
+
+    print('Raw Activity json:')
+    print(activity_laps_raw)
+    print('----')
+    print('Cleaned Activity json:')
+    # print(activity)
+
+    # return(activity)
+    pass
 
 def clean_raw_activities(i):
     timenow = time.time()
@@ -147,6 +174,18 @@ def clean_raw_activities(i):
     elevation = i['total_elevation_gain']
     distance = i['distance']
     duration = i['moving_time']
+    is_commute = i['commute']
+
+    try:
+        start_lat = i['start_latlng'][0]
+        start_lng = i['start_latlng'][1]
+        end_lat = i['end_latlng'][0]
+        end_lng = i['end_latlng'][1]
+    except:
+        start_lat = 0
+        start_lng = 0
+        end_lat = 0
+        end_lng = 0
 
     try:
         max_speed = i['max_speed']
@@ -191,7 +230,12 @@ def clean_raw_activities(i):
         "max_power": max_power,
         "avg_power": avg_power,
         "max_heartrate": max_heartrate,
-        "avg_heartrate": avg_heartrate
+        "avg_heartrate": avg_heartrate,
+        "is_commute": is_commute,
+        "start_lat": start_lat,
+        "start_lng": start_lng,
+        "end_lat": end_lat,
+        "end_lng": end_lng
     }
 
     return(activity)
