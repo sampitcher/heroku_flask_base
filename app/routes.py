@@ -326,3 +326,24 @@ def test():
         print(username)
         print(password)
     return render_template("test.html", filename='main.css')
+
+def parse_request(req):
+    """
+    Parses application/json request body data into a Python dictionary
+    """
+    payload = req.get_data()
+    # payload = unquote_plus(payload)
+    # payload = re.sub('payload=', '', payload)
+    payload = json.loads(payload)
+
+    return payload
+
+@app.route('/json_payload', methods = ['GET', 'POST'])
+def json_payload():
+    """
+    Send a POST request to localhost:5000/json_payload with a JSON body with a "p" key
+    to print that message in the server console.
+    """
+    payload = parse_request(request)
+    print(payload)
+    return render_template("index.html")

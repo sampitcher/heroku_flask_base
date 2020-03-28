@@ -154,11 +154,13 @@ def get_activity_laps(access_token, activity_id):
 
     # activity = clean_raw_activities(activity_laps_raw)
 
-    print('Raw Activity json:')
-    print(activity_laps_raw)
-    print('----')
-    print('Cleaned Activity json:')
+    # print('Raw Activity json:')
+    # print(activity_laps_raw)
+    # print('----')
+    # print('Cleaned Activity json:')
     # print(activity)
+    for i in activity_laps_raw:
+        print(i)
 
     # return(activity)
     pass
