@@ -1,116 +1,109 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
-.login-page {
-  width: 360px;
-  padding: 8% 0 0;
-  margin: auto;
+#header-info {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    width: 70%;
+    height: 40%;
 }
 
-.login-button {
-  font-family: "Roboto", sans-serif;
-  text-transform: uppercase;
-  outline: 0;
-  background: #4CAF50;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  color: #FFFFFF;
-  font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
-  cursor: pointer;
+#header-info-shot {
+    text-align: center;
+    font-size: 20pt;
+    white-space: pre;
+    height: 80px ;
 }
 
-.form {
-  position: relative;
-  z-index: 1;
-  background: #FFFFFF;
-  max-width: 360px;
-  margin: 0 auto 100px;
-  padding: 45px;
-  text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+#header-info-stats {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 10pt;
+    height: 100px;
 }
-.form input {
-  font-family: "Roboto", sans-serif;
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  margin: 0 0 15px;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 14px;
+
+.player-name {
+    font-weight: bold;
+    font-size: 12pt;
 }
-.form button {
-  font-family: "Roboto", sans-serif;
-  text-transform: uppercase;
-  outline: 0;
-  background: #4CAF50;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  color: #FFFFFF;
-  font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
-  cursor: pointer;
+
+#p1-stats {
+    width: 49%;
+    float: left;
 }
-.form button:hover,.form button:active,.form button:focus {
-  background: #43A047;
+
+#p2-stats {
+    width: 49%;
+    float: left;
 }
-.form .message {
-  margin: 15px 0 0;
-  color: #b3b3b3;
-  font-size: 12px;
+
+#p2-win-rate {
+    color: darkslategray;
 }
-.form .message a {
-  color: #4CAF50;
-  text-decoration: none;
+
+#header-info-history {
+    margin-top: 20px;
+    font-size: 14px;
 }
-.form .register-form {
-  display: none;
+
+#p1-win-bar {
+    width: 50%
 }
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 300px;
-  margin: 0 auto;
+
+#p2-win-bar {
+    width: 50%
 }
-.container:before, .container:after {
-  content: "";
-  display: block;
-  clear: both;
+
+#header-info-text {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    font-size: 4px;
+    font-style: italic;
 }
-.container .info {
-  margin: 50px auto;
-  text-align: center;
+
+
+/* Borders for every div element */
+.div {
+    margin: 10px;
 }
-.container .info h1 {
-  margin: 0 0 15px;
-  padding: 0;
-  font-size: 36px;
-  font-weight: 300;
-  color: #1a1a1a;
+
+/* Button containers live here */
+.row {
+    padding-top: 20px;
 }
-.container .info span {
-  color: #4d4d4d;
-  font-size: 12px;
+
+.half-button {
+    width: 49%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
-.container .info span a {
-  color: #000000;
-  text-decoration: none;
+
+.hidden {
+    visibility: hidden;
 }
-.container .info span .fa {
-  color: #EF3B3A;
+
+#undo {
+    margin-top: 30px;
 }
-body {
-  background: #76b852; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
-  background: -moz-linear-gradient(right, #76b852, #8DC26F);
-  background: -o-linear-gradient(right, #76b852, #8DC26F);
-  background: linear-gradient(to left, #76b852, #8DC26F);
-  font-family: "Roboto", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;      
-}
+
+.modal-auto {
+    display: block; /* Show by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
