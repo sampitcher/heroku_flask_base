@@ -342,7 +342,7 @@ def parse_request(req):
 def json_payload():
     """
     Send a POST request to localhost:5000/json_payload with a JSON body with a "p" key
-    to print that message in the server console.
+    to print that message in the server console
     """
     payload = parse_request(request)
     print(payload)
