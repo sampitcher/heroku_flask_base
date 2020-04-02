@@ -104,7 +104,7 @@ def get_activities(access_token, max_time=0):
 
     activities_array = []
     print(f'Getting activities from Strava')
-    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 30, 'page': 1})
+    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 1, 'page': 1})
 
     activities_raw = r.json()
 

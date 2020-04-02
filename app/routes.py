@@ -206,6 +206,7 @@ def sync():
     activities = get_acts(access_token, max_epoch)
 
     for activity in activities:
+        act_streams = get_act_streams(access_token, activity['activity_id'])
         activity = Activity(
             activity_id=activity['activity_id'],
             name=activity['name'],
@@ -229,6 +230,7 @@ def sync():
             end_lat=activity['end_lat'],
             end_lng=activity['end_lng'],
             name_id=activity['name']+'_'+str(activity['activity_id']),
+            streams=act_streams,
             author=current_user)
         db.session.add(activity)
         db.session.commit()
