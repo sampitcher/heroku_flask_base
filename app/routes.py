@@ -7,7 +7,7 @@ from app.models import User, Activity
 import time
 import json
 
-from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_laps as get_act_laps
+from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_streams as get_act_streams, get_activity_laps as get_act_laps
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
 
 def get_access_token():
@@ -49,6 +49,20 @@ def index():
     resp.set_cookie('strava-pitcherpakeman-test', value='this is a test', domain=".lookersandbox.com", samesite=None)
     return resp
 
+@app.route('/activity_stats', methods=['GET', 'POST'])
+@login_required
+def activity_stats():
+    act_streams = ''
+    username = current_user.username
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(activity_id)
+        access_token = get_access_token()
+        act_streams = get_act_streams(access_token, activity_id)
+        # print(act_streams)
+    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams))
+    return response
+
 @app.route('/running')
 @login_required
 def running():
@@ -71,31 +85,6 @@ def parkrun():
     response.set_cookie('same-site-cookie', 'lookersandbox.com', samesite='Lax');
     response.set_cookie('cross-site-cookie', 'lookersandbox.com', samesite='Lax', secure=True)
     return response
-
-# @app.route('/running')
-# @login_required
-# def running():
-#     username = current_user.username
-#     location = "looks/6"
-#     embed_url = generate_embed_url(username, location)
-#     return render_template('running.html', title='Running', embed_url=embed_url)
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(username=form.username.data).first()
-#         if user is None or not user.check_password(form.password.data):
-#             flash('Invalid username or password')
-#             return redirect(url_for('login'))
-#         login_user(user, remember=form.remember_me.data)
-#         next_page = request.args.get('next')
-#         if not next_page or url_parse(next_page).netloc != '':
-#             next_page = url_for('index')
-#         return redirect(next_page)
-#     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -122,20 +111,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = RegistrationForm()
-#     if form.validate_on_submit():
-#         user = User(username=form.username.data, email=form.email.data)
-#         user.set_password(form.password.data)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Congratulations, you are now a registered user!')
-#         return redirect(url_for('login'))
-#     return render_template('register.html', title='Register', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -170,7 +145,6 @@ def register():
             return render_template('register.html', title='Register', message=message)
             return redirect(url_for('register'))
         user = User(username=username, email=email)
-        # user.set_password(form.password.data)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -185,7 +159,6 @@ def user(username):
 
     activities = Activity.query.filter_by(author=current_user)
 
-    # username = current_user.username
     location = "looks/5"
     embed_url = generate_embed_url(username, location)
 

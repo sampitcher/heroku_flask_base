@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h2>activity stats</h2>
+
+    {% if current_user.is_anonymous %}
+
+    <p>Please login to use the app</p>
+    <a href="{{ url_for('login') }}">login</a>
+
+    {% else %}
+
+    {% endif %}
+
+    <div class="container-fluid">
+        <form method="POST" action="/activity_stats">
+              <div class="form-group">
+                <label>Activity ID</label>
+                <input type="text" class="form-control" name="activity_id">
+              </div>
+              <button type="submit" class="btn btn-primary">submit</button>
+        </form>
+    </div>
+
+    <div id="Container" style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
+        3239298495
+    </div>
+
+</div>
+
+{% endblock %}
