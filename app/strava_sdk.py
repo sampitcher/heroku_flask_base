@@ -163,7 +163,15 @@ def get_activity_streams(access_token, activity_id):
             elif len(activity_streams_raw) < 2:
                 activity_streams[key] = [None] * original_size
                 pass
+        try:
+            print(activity_streams[key][:6])
+        except:
+            print('Not enough rows...')
+
+    activity_streams['latlng'][0] = None
+    activity_streams['latlng'][-1] = None
     
+    # print(activity_streams)
     return(activity_streams)
 
 def get_activity_laps(access_token, activity_id):
