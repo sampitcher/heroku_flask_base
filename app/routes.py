@@ -59,7 +59,7 @@ def activity_stats():
         print(activity_id)
         access_token = get_access_token()
         act_streams = get_act_streams(access_token, activity_id)
-        # print(act_streams)
+
     response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams))
     return response
 
@@ -325,3 +325,33 @@ def json_payload():
     payload = parse_request(request)
     print(payload)
     return render_template("index.html")
+
+
+# import pandas as pd
+
+# log = {'time_key': [0,1,2,4,6,7,10], 'hr': [66,66,70,84,90,100,66], 'moving': [[12,12],[12,12],[12,12],[12,12],[12,12],[12,12],[12,12]]}
+
+# log_na = {'time_key' :range(max(log['time_key'])+1), 'time' :range(max(log['time_key'])+1)}
+
+# df = pd.DataFrame(log)
+# df_na = pd.DataFrame(log_na)
+
+
+# df_final = df_na.set_index('time_key').join(df.set_index('time_key')).interpolate()
+
+# df_rolling = df_final.rolling(5, win_type='triang').mean()
+# maxs = df_rolling.max()
+# print(maxs)
+# print(maxs.time)
+# max_hr = maxs.hr
+
+# print(max_hr)
+
+
+# activity_dict = df_final.to_dict(orient='list')
+
+# # print(activity_dict)
+
+# # df.resample(rule='str')
+# # df.bfill(axis='rows')
+
