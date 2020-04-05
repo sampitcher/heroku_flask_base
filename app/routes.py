@@ -60,6 +60,7 @@ def activity_stats():
         print(activity_id)
         access_token = get_access_token()
         act_streams = get_act_streams(access_token, activity_id)
+        print(act_streams)
 
     response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams))
     return response
@@ -213,7 +214,7 @@ def sync():
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
 
-        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna('None')
 
         print(df_final)
 
@@ -225,6 +226,8 @@ def sync():
         print(max_hr)
 
         act_streams_interpolated = df_final.to_dict(orient='list')
+        print(act_streams_interpolated)
+        pass
 
         activity = Activity(
             activity_id=activity['activity_id'],
