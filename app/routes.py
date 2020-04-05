@@ -208,7 +208,7 @@ def sync():
 
     for activity in activities:
         act_streams = get_act_streams(access_token, activity['activity_id'])
-        act_streams_times = {'time_key' :range(max(log['time_key'])+1), 'time_new' :range(max(log['time_key'])+1)}
+        act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
 
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
