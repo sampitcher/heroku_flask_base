@@ -214,7 +214,7 @@ def sync():
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
 
-        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna('None')
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna('null')
 
         print(df_final)
 
@@ -290,7 +290,7 @@ def get_activity():
 @app.route('/delete', methods = ['GET', 'POST'])
 @login_required
 def delete():
-    activities_delete = Activity.query.filter_by(author=current_user)
+    activities_delete = Activity.query.filter_by(author=current_user, activity_id="3253194511")
     for act in activities_delete:
         db.session.delete(act)
     db.session.commit()
