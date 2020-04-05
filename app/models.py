@@ -57,6 +57,7 @@ class Activity(db.Model):
     start_lng = db.Column(db.String(64))
     end_lat = db.Column(db.String(64))
     end_lng = db.Column(db.String(64))
+    streams = db.Column(db.JSON())
 
     def __repr__(self):
         return '<Activity {}>'.format(self.name)

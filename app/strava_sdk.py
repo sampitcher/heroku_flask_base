@@ -104,7 +104,7 @@ def get_activities(access_token, max_time=0):
 
     activities_array = []
     print(f'Getting activities from Strava')
-    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 30, 'page': 1})
+    r = session.get("{}/athlete/activities".format(base_url), params={'after': max_time, 'per_page': 1, 'page': 1})
 
     activities_raw = r.json()
 
@@ -139,6 +139,41 @@ def get_activity(access_token, activity_id):
     print(activity)
 
     return(activity)
+
+def get_activity_streams(access_token, activity_id):
+
+    auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
+
+    r = session.post(auth_url_2)
+    session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
+
+    keys = ["time", "latlng", "distance", "altitude", "velocity_smooth", "heartrate", "cadence", "watts", "temp", "moving", "grade_smooth"]
+    activity_streams = {}
+    
+    for key in keys:
+        print(f"\nGetting activity streams from Strava for {key}")
+        r = session.get(f"{base_url}/activities/{activity_id}/streams", params={'keys': [key]})
+        activity_streams_raw = r.json()
+        original_size = activity_streams_raw[0]['original_size']
+
+        for i in range(len(activity_streams_raw)):
+            if activity_streams_raw[i]['type'] == key:
+                activity_streams[key] = activity_streams_raw[i]['data']
+                pass
+            elif len(activity_streams_raw) < 2:
+                activity_streams[key] = [None] * original_size
+                pass
+        try:
+            print(activity_streams[key][:6])
+        except:
+            print('Not enough rows...')
+
+    activity_streams['time_key'] = activity_streams['time']
+    activity_streams['latlng'][0] = None
+    activity_streams['latlng'][-1] = None
+    
+    # print(activity_streams)
+    return(activity_streams)
 
 def get_activity_laps(access_token, activity_id):
 
@@ -241,31 +276,3 @@ def clean_raw_activities(i):
     }
 
     return(activity)
-
-# access_token = "eed5d24b524b46e824c5aa7f7e53653495ca284d"
-# code = "9995da9c388571e3960e663b018251c282c9d7b7"
-# get_activities(1,access_token)
-
-# def get_activities(access_token):
-#     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
-
-#     r = session.post(auth_url_2)
-#     session.headers.update({'Authorization': 'Bearer {}'.format(access_token)})
-
-#     activities_array = []
-#     for page in range(10):
-#         page = page + 1
-#         print(f'Getting page {page} from Strava')
-#         r = session.get("{}/athlete/activities".format(base_url), params={'after': 0, 'per_page': 20, 'page': page})
-
-#         activities_raw = r.json()
-
-#         for i in range(20):
-#             try:
-#                 print(f'Getting Activity number {i + 1} from page {page}')
-#                 activities_array.append(clean_raw_activities(activities_raw[i]))
-#             except:
-#                 pass
-
-#         # print(activities_array)
-#     return(activities_array)
