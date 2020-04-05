@@ -214,7 +214,10 @@ def sync():
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
 
-        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna('null')
+        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna(0)
+        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().replace({'nan':None})
+        df_final.replace({'nan':None})
 
         print(df_final)
 
