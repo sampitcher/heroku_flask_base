@@ -4,6 +4,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Activity
+import pandas as pd
 import time
 import json
 
@@ -207,6 +208,24 @@ def sync():
 
     for activity in activities:
         act_streams = get_act_streams(access_token, activity['activity_id'])
+        act_streams_times = {'time_key' :range(max(log['time_key'])+1), 'time_new' :range(max(log['time_key'])+1)}
+
+        df = pd.DataFrame(act_streams)
+        df_times = pd.DataFrame(act_streams_times)
+
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+
+        print(df_final)
+
+        df_rolling = df_final.rolling(5, win_type='triang').mean()
+        maxs = df_rolling.max()
+        print(maxs)
+
+        max_hr = maxs.heartrate
+        print(max_hr)
+
+        act_streams_interpolated = df_final.to_dict(orient='list')
+
         activity = Activity(
             activity_id=activity['activity_id'],
             name=activity['name'],
@@ -230,7 +249,8 @@ def sync():
             end_lat=activity['end_lat'],
             end_lng=activity['end_lng'],
             name_id=activity['name']+'_'+str(activity['activity_id']),
-            streams=act_streams,
+            # streams=act_streams,
+            streams=act_streams_interpolated,
             author=current_user)
         db.session.add(activity)
         db.session.commit()
@@ -327,17 +347,17 @@ def json_payload():
     return render_template("index.html")
 
 
-# import pandas as pd
+# log = {'time_key': [0,1,2,4,6,7,10], 'time': [0,1,2,4,6,7,10], 'hr': [66,66,70,84,90,100,66], 'moving': [[12,12],[12,12],[12,12],[12,12],[12,12],[12,12],[12,12]]}
 
-# log = {'time_key': [0,1,2,4,6,7,10], 'hr': [66,66,70,84,90,100,66], 'moving': [[12,12],[12,12],[12,12],[12,12],[12,12],[12,12],[12,12]]}
-
-# log_na = {'time_key' :range(max(log['time_key'])+1), 'time' :range(max(log['time_key'])+1)}
+# log_na = {'time_key' :range(max(log['time_key'])+1), 'time_new' :range(max(log['time_key'])+1)}
 
 # df = pd.DataFrame(log)
 # df_na = pd.DataFrame(log_na)
 
 
 # df_final = df_na.set_index('time_key').join(df.set_index('time_key')).interpolate()
+
+# print(df_final)
 
 # df_rolling = df_final.rolling(5, win_type='triang').mean()
 # maxs = df_rolling.max()
@@ -349,9 +369,4 @@ def json_payload():
 
 
 # activity_dict = df_final.to_dict(orient='list')
-
-# # print(activity_dict)
-
-# # df.resample(rule='str')
-# # df.bfill(axis='rows')
 

@@ -168,6 +168,7 @@ def get_activity_streams(access_token, activity_id):
         except:
             print('Not enough rows...')
 
+    activity_streams['time_key'] = activity_streams['time']
     activity_streams['latlng'][0] = None
     activity_streams['latlng'][-1] = None
     
