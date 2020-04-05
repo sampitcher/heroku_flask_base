@@ -224,16 +224,32 @@ def sync():
 
         print(df_final)
 
-        df_rolling = df_final.rolling(5, win_type='triang').mean()
+        rollings = [1,5,10,20,30,45,60,300,600,1200]
+        rolling_dict = {}
+        for i in rollings:
+            rolling_avg = df_final.rolling(i, win_type='triang').mean()
+            maxs = rolling_avg.max()
+            try:
+                max_hr = maxs.heartrate
+            except:
+                max_hr = None
+            try:
+                max_power = maxs.heartrate
+            except:
+                max_power = None
+
+            rolling_dict[f'max_hr_{i}'] = max_hr
+            rolling_dict[f'max_power_{i}'] = max_power
         # maxs = df_rolling.max()
         # print(maxs)
 
         # max_hr = maxs.heartrate
         # print(max_hr)
+        print(rolling_dict)
 
         act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
         print(act_streams_interpolated)
-        pass
+        # pass
 
         activity = Activity(
             activity_id=activity['activity_id'],
@@ -260,6 +276,7 @@ def sync():
             name_id=activity['name']+'_'+str(activity['activity_id']),
             # streams=act_streams,
             streams=act_streams_interpolated,
+            maxs=rolling_dict,
             author=current_user)
         db.session.add(activity)
         db.session.commit()
