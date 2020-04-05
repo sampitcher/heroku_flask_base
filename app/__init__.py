@@ -4,8 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+# from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+# cors = CORS(app, resources={r"/foo": {"origins": "http://localhost:port"}})
 app.config.from_object(Config)
 if __name__ == "__main__":
     app.run(ssl_context='adhoc')

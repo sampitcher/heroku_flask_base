@@ -45,8 +45,10 @@ def index():
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
     resp = make_response(render_template('index.html', title='Home', embed_url=embed_url))
-    # resp.set_cookie('strava-pitcherpakeman', 'this is a test', domain="pitcherpakeman001.lookersandbox.com")
+    resp.headers.add('Access-Control-Allow-Origin', 'http://pitcherpakeman001.lookersandbox.com')
+    resp.headers.add('Access-Control-Allow-Credentials', 'true')
     resp.set_cookie('strava-pitcherpakeman-test', value='this is a test', domain=".lookersandbox.com", samesite=None)
+    print(resp)
     return resp
 
 @app.route('/running')
