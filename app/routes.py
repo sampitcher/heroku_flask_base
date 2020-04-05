@@ -5,6 +5,7 @@ from app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Activity
 import pandas as pd
+import numpy as np
 import time
 import json
 
@@ -216,21 +217,21 @@ def sync():
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
 
-        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
-        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna(0)
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna(0)
         # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().replace({'nan':None})
-        df_final.replace({'nan':None})
+        df_final.replace({np.nan:None})
 
         print(df_final)
 
         df_rolling = df_final.rolling(5, win_type='triang').mean()
-        maxs = df_rolling.max()
-        print(maxs)
+        # maxs = df_rolling.max()
+        # print(maxs)
 
-        max_hr = maxs.heartrate
-        print(max_hr)
+        # max_hr = maxs.heartrate
+        # print(max_hr)
 
-        act_streams_interpolated = df_final.to_dict(orient='list')
+        act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
         print(act_streams_interpolated)
         pass
 
