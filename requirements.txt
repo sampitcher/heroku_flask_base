@@ -19,6 +19,7 @@ Mako==1.0.12
 MarkupSafe==1.1.1
 numpy==1.16.4
 pandas==0.24.2
+Pillow==6.0.0
 psycopg2-binary==2.8.3
 psycopg2==2.8.3
 pyparsing==2.4.0
