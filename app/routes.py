@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, make_response
+from flask import render_template, flash, redirect, url_for, request, make_response, Response
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
@@ -373,27 +373,14 @@ def json_payload():
     print(payload)
     return render_template("index.html")
 
-
-# log = {'time_key': [0,1,2,4,6,7,10], 'time': [0,1,2,4,6,7,10], 'hr': [66,66,70,84,90,100,66], 'moving': [[12,12],[12,12],[12,12],[12,12],[12,12],[12,12],[12,12]]}
-
-# log_na = {'time_key' :range(max(log['time_key'])+1), 'time_new' :range(max(log['time_key'])+1)}
-
-# df = pd.DataFrame(log)
-# df_na = pd.DataFrame(log_na)
-
-
-# df_final = df_na.set_index('time_key').join(df.set_index('time_key')).interpolate()
-
-# print(df_final)
-
-# df_rolling = df_final.rolling(5, win_type='triang').mean()
-# maxs = df_rolling.max()
-# print(maxs)
-# print(maxs.time)
-# max_hr = maxs.hr
-
-# print(max_hr)
-
-
-# activity_dict = df_final.to_dict(orient='list')
-
+@app.route('/slack', methods=['POST'])
+def inbound():
+    # if request.form.get('token') == SLACK_WEBHOOK_SECRET:
+    if request.form:
+        print('recieved!!!!')
+        # channel = request.form.get('channel_name')
+        # username = request.form.get('user_name')
+        # text = request.form.get('text')
+        # inbound_message = username + " in " + channel + " says: " + text
+        # print(inbound_message)
+    return Response(), 200
