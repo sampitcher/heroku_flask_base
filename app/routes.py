@@ -350,7 +350,7 @@ def get_activity():
 @app.route('/delete', methods = ['GET', 'POST'])
 @login_required
 def delete():
-    activities_delete = Activity.query.filter_by(author=current_user, activity_id="3257858588")
+    activities_delete = Activity.query.filter_by(author=current_user, activity_id="3279246878")
     for act in activities_delete:
         db.session.delete(act)
     db.session.commit()
