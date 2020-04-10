@@ -58,15 +58,23 @@ def index():
 @login_required
 def activity_stats():
     act_streams = ''
+    my_image_url = ''
     username = current_user.username
     if request.form:
         activity_id = request.form.get('activity_id')
         print(activity_id)
         access_token = get_access_token()
         act_streams = get_act_streams(access_token, activity_id)
-        print(act_streams['latlng'])
+        # print(act_streams['latlng'])
 
-    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams))
+        lat_lng_data = act_streams['latlng']
+        normalised_route = norm_data(lat_lng_data)
+        my_image_string = drw_route(normalised_route)
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        my_image_url = post_img(api_key, my_image_string)
+
+
+    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams, my_image_url=my_image_url))
     return response
 
 @app.route('/running')
@@ -212,20 +220,32 @@ def sync():
     activities = get_acts(access_token, max_epoch)
 
     for activity in activities:
+        ####################
+        # ACTIVITY STREAMS #
+        ####################
+
+        # Run the act_streams function in strava_sdk to get the streams data
         act_streams = get_act_streams(access_token, activity['activity_id'])
+        # Add a new dictionary which has the same time keys as the act_streams for a join on time to fill the time gaps
         act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
 
+        # Turn them both into dataframes
         df = pd.DataFrame(act_streams)
         df_times = pd.DataFrame(act_streams_times)
 
+        # Join them and fill in the gaps
         df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
-        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().fillna(0)
-        # df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate().replace({'nan':None})
+        # Turn the NaN's to nulls for postgres
         df_final.replace({np.nan:None})
+        # Turn the dataframe to a list
+        act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
 
-        print(df_final)
+        ####################
+        # ROLLING AVERAGES #
+        ####################
 
-        rollings = [1,5,10,20,30,45,60,300,600,1200]
+        # List of the rolling averages for hr, power and speed
+        rollings = [1,5,10,20,30,45,60,120,300,600,1200]
         rolling_dict = {}
         for i in rollings:
             rolling_avg = df_final.rolling(i, win_type='triang').mean()
@@ -235,22 +255,27 @@ def sync():
             except:
                 max_hr = None
             try:
-                max_power = maxs.heartrate
+                max_power = maxs.watts
             except:
                 max_power = None
+            try:
+                max_speed = maxs.velocity_smooth
+            except:
+                max_speed = None
 
             rolling_dict[f'max_hr_{i}'] = max_hr
             rolling_dict[f'max_power_{i}'] = max_power
-        # maxs = df_rolling.max()
-        # print(maxs)
+            rolling_dict[f'max_speed_{i}'] = max_speed
+        
+        ##################
+        # ACTIVITY IMAGE #
+        ##################
 
-        # max_hr = maxs.heartrate
-        # print(max_hr)
-        print(rolling_dict)
-
-        act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
-        print(act_streams_interpolated)
-        # pass
+        lat_lng_data = act_streams['latlng']
+        normalised_route = norm_data(lat_lng_data)
+        image_string = drw_route(normalised_route)
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        image_url = post_img(api_key, image_string)
 
         activity = Activity(
             activity_id=activity['activity_id'],
@@ -275,9 +300,9 @@ def sync():
             end_lat=activity['end_lat'],
             end_lng=activity['end_lng'],
             name_id=activity['name']+'_'+str(activity['activity_id']),
-            # streams=act_streams,
             streams=act_streams_interpolated,
             maxs=rolling_dict,
+            icon_url = image_url,
             author=current_user)
         db.session.add(activity)
         db.session.commit()

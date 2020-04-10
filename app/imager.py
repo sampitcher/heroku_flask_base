@@ -20,15 +20,16 @@ def normalise_data(data):
 
     if df_x_diff < df_y_diff:
         x_y_diff = df_x_diff / df_y_diff
-        weight = (255-x_y_diff)/2
-        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*255*x_y_diff
+        weight = (1000-(1000*x_y_diff))/2
+        # weight = 0
+        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*1000*x_y_diff
         norm_x = norm_x.add(weight)
-        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*255
+        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*1000
     else:
         x_y_diff = df_y_diff / df_x_diff
-        weight = (255-x_y_diff)/2
-        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*255
-        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*255*x_y_diff
+        weight = (1000-x_y_diff)/2
+        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*1000
+        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*1000*x_y_diff
         norm_y = norm_y.add(weight)
 
     norm_df = pd.concat([norm_x,norm_y], axis=1)
@@ -42,7 +43,7 @@ def normalise_data(data):
     return norm_data
 
 def draw_route(data):
-    img = Image.new('RGBA', (256, 256))
+    img = Image.new('RGBA', (1000, 1000))
     draw_img = ImageDraw.Draw(img)
      
     for i in range(len(data)):
@@ -55,7 +56,7 @@ def draw_route(data):
         except:
             x2 = data[i][0]
             y2 = data[i][1]
-        draw_img.line((x1,y1,x2,y2), width=1, fill=(255,0,0,255))
+        draw_img.line((x1,y1,x2,y2), width=2, fill=(64,224,208))
              
     # img.save('my_png.png')
 
@@ -80,6 +81,7 @@ def post_image_str(api_key, image_str):
     res = requests.post(base_url, payload)
 
     image_url = res.json()['data']['url']
+    print(image_url)
 
     return(image_url)
 
