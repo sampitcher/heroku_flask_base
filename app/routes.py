@@ -39,6 +39,136 @@ def generate_embed_url(username, location):
     embed_url = pbl_generate(user, location)
     return(embed_url)
 
+def sync_activities(activity_id=None):
+    username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    user_id = user.id
+    access_token = get_access_token()
+    print(f'user id: {user_id}')
+
+    if activity_id == None:
+        print('Getting activities using epoch as max time')
+        # Find the latest activity epoch in database
+        max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
+        print(f'Last epoch: {max_epoch}')
+        # Get an array of 1 activities (when writing it's only one activity)
+        activities = get_acts(access_token, max_epoch)
+    else:
+        print(f'Getting activity using Activity ID: {activity_id}')
+        activities = get_act(access_token, activity_id)
+
+    for activity in activities:
+        ####################
+        # ACTIVITY STREAMS #
+        ####################
+
+        # Run the act_streams function in strava_sdk to get the streams data
+        act_streams = get_act_streams(access_token, activity['activity_id'])
+        # Add a new dictionary which has the same time keys as the act_streams for a join on time to fill the time gaps
+        act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
+
+        # Turn them both into dataframes
+        df = pd.DataFrame(act_streams)
+        df_times = pd.DataFrame(act_streams_times)
+
+        # Join them and fill in the gaps
+        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+        # Turn the NaN's to nulls for postgres
+        df_final.replace({np.nan:None})
+        # Turn the dataframe to a list
+        act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
+
+        ####################
+        # ROLLING AVERAGES #
+        ####################
+
+        # List of the rolling averages for hr, power and speed
+        rollings = [1,5,10,20,30,45,60,120,300,600,1200]
+        rolling_dict = {}
+        for i in rollings:
+            rolling_avg = df_final.rolling(i, win_type='triang').mean()
+            maxs = rolling_avg.max()
+            try:
+                max_hr = maxs.heartrate
+            except:
+                max_hr = None
+            try:
+                max_power = maxs.watts
+            except:
+                max_power = None
+            try:
+                max_speed = maxs.velocity_smooth
+            except:
+                max_speed = None
+
+            rolling_dict[f'max_hr_{i}'] = max_hr
+            rolling_dict[f'max_power_{i}'] = max_power
+            rolling_dict[f'max_speed_{i}'] = max_speed
+        
+        print(rolling_dict)
+        for i in rolling_dict:
+            print(f'{i}: {rolling_dict[i]}')
+            try:
+                if rolling_dict[i] >= 0:
+                    pass
+                else:
+                    rolling_dict[i] = None
+            except:
+                rolling_dict[i] = None
+        
+        ##################
+        # ACTIVITY IMAGE #
+        ##################
+
+        lat_lng_data = act_streams['latlng']
+        normalised_route = norm_data(lat_lng_data)
+        image_string = drw_route(normalised_route)
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        image_url = post_img(api_key, image_string)
+        # image_url = 'test.png'
+
+        activity = Activity(
+            activity_id=activity['activity_id'],
+            name=activity['name'],
+            activity_type=activity['activity_type'],
+            epoch=activity['epoch'],
+            # timenow=activity['timenow'],
+            timestamp=activity['timestamp'],
+            user_id=activity['user_id'],
+            elevation=activity['elevation'],
+            distance=activity['distance'],
+            duration=activity['duration'],
+            max_speed=activity['max_speed'],
+            avg_speed=activity['avg_speed'],
+            max_power=activity['max_power'],
+            avg_power=activity['avg_power'],
+            max_heartrate=activity['max_heartrate'],
+            avg_heartrate=activity['avg_heartrate'],
+            is_commute=activity['is_commute'],
+            start_lat=activity['start_lat'],
+            start_lng=activity['start_lng'],
+            end_lat=activity['end_lat'],
+            end_lng=activity['end_lng'],
+            name_id=activity['name']+'_'+str(activity['activity_id']),
+            streams=act_streams_interpolated,
+            maxs=rolling_dict,
+            icon_url=image_url,
+            author=current_user)
+        db.session.add(activity)
+        db.session.commit()
+
+    if activity_id == None:
+        print('Added latest activities')
+    else:
+        print(f'Synced Activity {activity_id}')
+
+    # location = "dashboards/7"
+    # embed_url = generate_embed_url(username, location)
+
+    # return render_template("index.html", user=user, embed_url=embed_url)
+    return True
+
+
 @app.route('/')
 
 @app.route('/index')
@@ -201,131 +331,144 @@ def getstravacode():
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
+@app.route('/sync_activity_id', methods = ['GET', 'POST'])
+@login_required
+def sync_activity_id():
+    username = current_user.username
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(f'User selected the Activity ID: {activity_id}')
+        access_token = get_access_token()
+    
+    sync_activities(activity_id)
+
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
+
+    return render_template("index.html", user=user, embed_url=embed_url)
+
 
 @app.route('/sync', methods = ['GET', 'POST'])
 @login_required
 def sync():
-    username = current_user.username
-    user = User.query.filter_by(username=username).first()
-    user_id = user.id
-    access_token = get_access_token()
-    print(f'user id: {user_id}')
-
-    # Find the latest activity epoch in database
-    max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
-    print(f'Last epoch: {max_epoch}')
-
-    # Get an array of 1 activities (when writing it's only one activity)
-    activities = get_acts(access_token, max_epoch)
-
-    for activity in activities:
-        ####################
-        # ACTIVITY STREAMS #
-        ####################
-
-        # Run the act_streams function in strava_sdk to get the streams data
-        act_streams = get_act_streams(access_token, activity['activity_id'])
-        # Add a new dictionary which has the same time keys as the act_streams for a join on time to fill the time gaps
-        act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
-
-        # Turn them both into dataframes
-        df = pd.DataFrame(act_streams)
-        df_times = pd.DataFrame(act_streams_times)
-
-        # Join them and fill in the gaps
-        df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
-        # Turn the NaN's to nulls for postgres
-        df_final.replace({np.nan:None})
-        # Turn the dataframe to a list
-        act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
-
-        ####################
-        # ROLLING AVERAGES #
-        ####################
-
-        # List of the rolling averages for hr, power and speed
-        rollings = [1,5,10,20,30,45,60,120,300,600,1200]
-        rolling_dict = {}
-        for i in rollings:
-            rolling_avg = df_final.rolling(i, win_type='triang').mean()
-            maxs = rolling_avg.max()
-            try:
-                max_hr = maxs.heartrate
-            except:
-                max_hr = None
-            try:
-                max_power = maxs.watts
-            except:
-                max_power = None
-            try:
-                max_speed = maxs.velocity_smooth
-            except:
-                max_speed = None
-
-            rolling_dict[f'max_hr_{i}'] = max_hr
-            rolling_dict[f'max_power_{i}'] = max_power
-            rolling_dict[f'max_speed_{i}'] = max_speed
-        
-        print(rolling_dict)
-        for i in rolling_dict:
-            print(f'{i}: {rolling_dict[i]}')
-            try:
-                if rolling_dict[i] >= 0:
-                    pass
-                else:
-                    rolling_dict[i] = None
-            except:
-                rolling_dict[i] = None
-        
-        ##################
-        # ACTIVITY IMAGE #
-        ##################
-
-        lat_lng_data = act_streams['latlng']
-        normalised_route = norm_data(lat_lng_data)
-        image_string = drw_route(normalised_route)
-        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
-        image_url = post_img(api_key, image_string)
-        # image_url = 'test.png'
-
-        activity = Activity(
-            activity_id=activity['activity_id'],
-            name=activity['name'],
-            activity_type=activity['activity_type'],
-            epoch=activity['epoch'],
-            # timenow=activity['timenow'],
-            timestamp=activity['timestamp'],
-            user_id=activity['user_id'],
-            elevation=activity['elevation'],
-            distance=activity['distance'],
-            duration=activity['duration'],
-            max_speed=activity['max_speed'],
-            avg_speed=activity['avg_speed'],
-            max_power=activity['max_power'],
-            avg_power=activity['avg_power'],
-            max_heartrate=activity['max_heartrate'],
-            avg_heartrate=activity['avg_heartrate'],
-            is_commute=activity['is_commute'],
-            start_lat=activity['start_lat'],
-            start_lng=activity['start_lng'],
-            end_lat=activity['end_lat'],
-            end_lng=activity['end_lng'],
-            name_id=activity['name']+'_'+str(activity['activity_id']),
-            streams=act_streams_interpolated,
-            maxs=rolling_dict,
-            icon_url=image_url,
-            author=current_user)
-        db.session.add(activity)
-        db.session.commit()
-
-    print(activities)
+    sync_activities()
 
     # username = current_user.username
     # user = User.query.filter_by(username=username).first()
-    # athlete_id = user.athlete_id
+    # user_id = user.id
+    # access_token = get_access_token()
+    # print(f'user id: {user_id}')
 
-    # get_num_acts(access_token, athlete_id)
+    # # Find the latest activity epoch in database
+    # max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
+    # print(f'Last epoch: {max_epoch}')
 
+    # # Get an array of 1 activities (when writing it's only one activity)
+    # activities = get_acts(access_token, max_epoch)
+
+    # for activity in activities:
+    #     ####################
+    #     # ACTIVITY STREAMS #
+    #     ####################
+
+    #     # Run the act_streams function in strava_sdk to get the streams data
+    #     act_streams = get_act_streams(access_token, activity['activity_id'])
+    #     # Add a new dictionary which has the same time keys as the act_streams for a join on time to fill the time gaps
+    #     act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
+
+    #     # Turn them both into dataframes
+    #     df = pd.DataFrame(act_streams)
+    #     df_times = pd.DataFrame(act_streams_times)
+
+    #     # Join them and fill in the gaps
+    #     df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
+    #     # Turn the NaN's to nulls for postgres
+    #     df_final.replace({np.nan:None})
+    #     # Turn the dataframe to a list
+    #     act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
+
+    #     ####################
+    #     # ROLLING AVERAGES #
+    #     ####################
+
+    #     # List of the rolling averages for hr, power and speed
+    #     rollings = [1,5,10,20,30,45,60,120,300,600,1200]
+    #     rolling_dict = {}
+    #     for i in rollings:
+    #         rolling_avg = df_final.rolling(i, win_type='triang').mean()
+    #         maxs = rolling_avg.max()
+    #         try:
+    #             max_hr = maxs.heartrate
+    #         except:
+    #             max_hr = None
+    #         try:
+    #             max_power = maxs.watts
+    #         except:
+    #             max_power = None
+    #         try:
+    #             max_speed = maxs.velocity_smooth
+    #         except:
+    #             max_speed = None
+
+    #         rolling_dict[f'max_hr_{i}'] = max_hr
+    #         rolling_dict[f'max_power_{i}'] = max_power
+    #         rolling_dict[f'max_speed_{i}'] = max_speed
+        
+    #     print(rolling_dict)
+    #     for i in rolling_dict:
+    #         print(f'{i}: {rolling_dict[i]}')
+    #         try:
+    #             if rolling_dict[i] >= 0:
+    #                 pass
+    #             else:
+    #                 rolling_dict[i] = None
+    #         except:
+    #             rolling_dict[i] = None
+        
+    #     ##################
+    #     # ACTIVITY IMAGE #
+    #     ##################
+
+    #     lat_lng_data = act_streams['latlng']
+    #     normalised_route = norm_data(lat_lng_data)
+    #     image_string = drw_route(normalised_route)
+    #     api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+    #     image_url = post_img(api_key, image_string)
+    #     # image_url = 'test.png'
+
+    #     activity = Activity(
+    #         activity_id=activity['activity_id'],
+    #         name=activity['name'],
+    #         activity_type=activity['activity_type'],
+    #         epoch=activity['epoch'],
+    #         # timenow=activity['timenow'],
+    #         timestamp=activity['timestamp'],
+    #         user_id=activity['user_id'],
+    #         elevation=activity['elevation'],
+    #         distance=activity['distance'],
+    #         duration=activity['duration'],
+    #         max_speed=activity['max_speed'],
+    #         avg_speed=activity['avg_speed'],
+    #         max_power=activity['max_power'],
+    #         avg_power=activity['avg_power'],
+    #         max_heartrate=activity['max_heartrate'],
+    #         avg_heartrate=activity['avg_heartrate'],
+    #         is_commute=activity['is_commute'],
+    #         start_lat=activity['start_lat'],
+    #         start_lng=activity['start_lng'],
+    #         end_lat=activity['end_lat'],
+    #         end_lng=activity['end_lng'],
+    #         name_id=activity['name']+'_'+str(activity['activity_id']),
+    #         streams=act_streams_interpolated,
+    #         maxs=rolling_dict,
+    #         icon_url=image_url,
+    #         author=current_user)
+    #     db.session.add(activity)
+    #     db.session.commit()
+
+    # print(activities)
+
+    username = current_user.username
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
 
