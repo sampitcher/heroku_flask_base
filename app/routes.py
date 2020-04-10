@@ -39,6 +39,19 @@ def generate_embed_url(username, location):
     embed_url = pbl_generate(user, location)
     return(embed_url)
 
+def delete_activity(activity_id=None):
+    if activity_id == None:
+        print('No Activity ID...')
+        return True
+    else:
+        print(f'Deleting activity using Activity ID: {activity_id}')
+    
+    activities_delete = Activity.query.filter_by(author=current_user, activity_id=activity_id)
+    for act in activities_delete:
+        db.session.delete(act)
+    db.session.commit()
+    return True
+
 def sync_activities(activity_id=None):
     username = current_user.username
     user = User.query.filter_by(username=username).first()
@@ -337,11 +350,26 @@ def sync_activity_id():
     username = current_user.username
     if request.form:
         activity_id = request.form.get('activity_id')
-        print(f'User selected the Activity ID: {activity_id}')
-        access_token = get_access_token()
+        print(f'User selected to add the Activity ID: {activity_id}')
+        # access_token = get_access_token()
     
     sync_activities(activity_id)
 
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
+
+    return render_template("index.html", user=user, embed_url=embed_url)
+
+
+@app.route('/delete_activity_id', methods = ['GET', 'POST'])
+@login_required
+def delete_activity_id():
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(f'User selected to delete the Activity ID: {activity_id}')
+        delete_activity(activity_id)
+    
+    username = current_user.username
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
 
