@@ -272,12 +272,12 @@ def sync():
         # ACTIVITY IMAGE #
         ##################
 
-        # lat_lng_data = act_streams['latlng']
-        # normalised_route = norm_data(lat_lng_data)
-        # image_string = drw_route(normalised_route)
-        # api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
-        # image_url = post_img(api_key, image_string)
-        image_url = 'test.png'
+        lat_lng_data = act_streams['latlng']
+        normalised_route = norm_data(lat_lng_data)
+        image_string = drw_route(normalised_route)
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        image_url = post_img(api_key, image_string)
+        # image_url = 'test.png'
 
         activity = Activity(
             activity_id=activity['activity_id'],
