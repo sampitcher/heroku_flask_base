@@ -13,6 +13,10 @@ from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_wi
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
 from app.imager import normalise_data as norm_data, draw_route as drw_route, post_image_str as post_img
 
+##################
+# BASE FUNCTIONS #
+##################
+
 def get_access_token():
     username = current_user.username
     user = User.query.filter_by(username=username).first()
@@ -191,6 +195,10 @@ def update_activity(activity_id=None):
         print(f'Updated Activity ID {activity_id}')
         return True
 
+##########
+# ROUTES #
+##########
+
 @app.route('/')
 
 @app.route('/index')
@@ -206,51 +214,9 @@ def index():
     print(resp)
     return resp
 
-@app.route('/activity_stats', methods=['GET', 'POST'])
-@login_required
-def activity_stats():
-    act_streams = ''
-    my_image_url = ''
-    username = current_user.username
-    if request.form:
-        activity_id = request.form.get('activity_id')
-        print(activity_id)
-        access_token = get_access_token()
-        act_streams = get_act_streams(access_token, activity_id)
-        # print(act_streams['latlng'])
-
-        lat_lng_data = act_streams['latlng']
-        normalised_route = norm_data(lat_lng_data)
-        my_image_string = drw_route(normalised_route)
-        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
-        my_image_url = post_img(api_key, my_image_string)
-
-
-    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams, my_image_url=my_image_url))
-    return response
-
-@app.route('/running')
-@login_required
-def running():
-    username = current_user.username
-    location = "looks/6"
-    embed_url = generate_embed_url(username, location)
-    response = make_response(render_template('running.html', title='Running', embed_url=embed_url))
-    response.set_cookie('same-site-cookie', 'https://lookersandbox.com', samesite=None);
-    response.set_cookie('cross-site-cookie', 'https://lookersandbox.com', samesite=None, secure=True)
-    return response
-
-@app.route('/parkrun')
-@login_required
-def parkrun():
-    username = current_user.username
-    location = "dashboards/8"
-    embed_url = generate_embed_url(username, location)
-    response = make_response(render_template('parkrun.html', title='Parkrun', embed_url=embed_url))
-
-    response.set_cookie('same-site-cookie', 'lookersandbox.com', samesite='Lax');
-    response.set_cookie('cross-site-cookie', 'lookersandbox.com', samesite='Lax', secure=True)
-    return response
+#######################
+# USER SIGN-IN ROUTES #
+#######################
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -330,22 +296,14 @@ def user(username):
 
     return render_template('user.html', user=user, activities=activities, embed_url=embed_url)
 
-@app.route("/getstravacode", methods=["GET", "POST"])
+##################
+# STRAVA ROUTES  #
+##################
+
+@app.route('/sync', methods = ['GET', 'POST'])
 @login_required
-def getstravacode():
-    strava_code = request.args.get('code', '')
-    username = current_user.username
-
-    access_token, refresh_token, expires_at = get_tokens_w_c(strava_code)
-
-    user = User.query.filter_by(username=username).first()
-    user.strava_code = strava_code
-    user.access_token = access_token
-    user.refresh_token = refresh_token
-    user.expires_at = expires_at
-    db.session.commit()
-
-    athlete_id = get_ath_id(access_token)
+def sync():
+    sync_activities()
 
     username = current_user.username
     location = "dashboards/7"
@@ -369,7 +327,6 @@ def sync_activity_id():
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
-
 @app.route('/delete_activity_id', methods = ['GET', 'POST'])
 @login_required
 def delete_activity_id():
@@ -383,6 +340,7 @@ def delete_activity_id():
     embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
+
 
 @app.route('/update_activity_id', methods = ['GET', 'POST'])
 @login_required
@@ -398,132 +356,6 @@ def update_activity_id():
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
-
-@app.route('/sync', methods = ['GET', 'POST'])
-@login_required
-def sync():
-    sync_activities()
-
-    # username = current_user.username
-    # user = User.query.filter_by(username=username).first()
-    # user_id = user.id
-    # access_token = get_access_token()
-    # print(f'user id: {user_id}')
-
-    # # Find the latest activity epoch in database
-    # max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
-    # print(f'Last epoch: {max_epoch}')
-
-    # # Get an array of 1 activities (when writing it's only one activity)
-    # activities = get_acts(access_token, max_epoch)
-
-    # for activity in activities:
-    #     ####################
-    #     # ACTIVITY STREAMS #
-    #     ####################
-
-    #     # Run the act_streams function in strava_sdk to get the streams data
-    #     act_streams = get_act_streams(access_token, activity['activity_id'])
-    #     # Add a new dictionary which has the same time keys as the act_streams for a join on time to fill the time gaps
-    #     act_streams_times = {'time_key' :range(max(act_streams['time_key'])+1), 'time_new' :range(max(act_streams['time_key'])+1)}
-
-    #     # Turn them both into dataframes
-    #     df = pd.DataFrame(act_streams)
-    #     df_times = pd.DataFrame(act_streams_times)
-
-    #     # Join them and fill in the gaps
-    #     df_final = df_times.set_index('time_key').join(df.set_index('time_key')).interpolate()
-    #     # Turn the NaN's to nulls for postgres
-    #     df_final.replace({np.nan:None})
-    #     # Turn the dataframe to a list
-    #     act_streams_interpolated = df_final.replace({np.nan:None}).to_dict(orient='list')
-
-    #     ####################
-    #     # ROLLING AVERAGES #
-    #     ####################
-
-    #     # List of the rolling averages for hr, power and speed
-    #     rollings = [1,5,10,20,30,45,60,120,300,600,1200]
-    #     rolling_dict = {}
-    #     for i in rollings:
-    #         rolling_avg = df_final.rolling(i, win_type='triang').mean()
-    #         maxs = rolling_avg.max()
-    #         try:
-    #             max_hr = maxs.heartrate
-    #         except:
-    #             max_hr = None
-    #         try:
-    #             max_power = maxs.watts
-    #         except:
-    #             max_power = None
-    #         try:
-    #             max_speed = maxs.velocity_smooth
-    #         except:
-    #             max_speed = None
-
-    #         rolling_dict[f'max_hr_{i}'] = max_hr
-    #         rolling_dict[f'max_power_{i}'] = max_power
-    #         rolling_dict[f'max_speed_{i}'] = max_speed
-        
-    #     print(rolling_dict)
-    #     for i in rolling_dict:
-    #         print(f'{i}: {rolling_dict[i]}')
-    #         try:
-    #             if rolling_dict[i] >= 0:
-    #                 pass
-    #             else:
-    #                 rolling_dict[i] = None
-    #         except:
-    #             rolling_dict[i] = None
-        
-    #     ##################
-    #     # ACTIVITY IMAGE #
-    #     ##################
-
-    #     lat_lng_data = act_streams['latlng']
-    #     normalised_route = norm_data(lat_lng_data)
-    #     image_string = drw_route(normalised_route)
-    #     api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
-    #     image_url = post_img(api_key, image_string)
-    #     # image_url = 'test.png'
-
-    #     activity = Activity(
-    #         activity_id=activity['activity_id'],
-    #         name=activity['name'],
-    #         activity_type=activity['activity_type'],
-    #         epoch=activity['epoch'],
-    #         # timenow=activity['timenow'],
-    #         timestamp=activity['timestamp'],
-    #         user_id=activity['user_id'],
-    #         elevation=activity['elevation'],
-    #         distance=activity['distance'],
-    #         duration=activity['duration'],
-    #         max_speed=activity['max_speed'],
-    #         avg_speed=activity['avg_speed'],
-    #         max_power=activity['max_power'],
-    #         avg_power=activity['avg_power'],
-    #         max_heartrate=activity['max_heartrate'],
-    #         avg_heartrate=activity['avg_heartrate'],
-    #         is_commute=activity['is_commute'],
-    #         start_lat=activity['start_lat'],
-    #         start_lng=activity['start_lng'],
-    #         end_lat=activity['end_lat'],
-    #         end_lng=activity['end_lng'],
-    #         name_id=activity['name']+'_'+str(activity['activity_id']),
-    #         streams=act_streams_interpolated,
-    #         maxs=rolling_dict,
-    #         icon_url=image_url,
-    #         author=current_user)
-    #     db.session.add(activity)
-    #     db.session.commit()
-
-    # print(activities)
-
-    username = current_user.username
-    location = "dashboards/7"
-    embed_url = generate_embed_url(username, location)
-
-    return render_template("index.html", user=user, embed_url=embed_url)
 
 @app.route('/get_activity', methods = ['GET', 'POST'])
 @login_required
@@ -541,19 +373,78 @@ def get_activity():
     return render_template("index.html", embed_url=embed_url)
 
 
-@app.route('/delete', methods = ['GET', 'POST'])
+@app.route("/getstravacode", methods=["GET", "POST"])
 @login_required
-def delete():
-    activities_delete = Activity.query.filter_by(author=current_user, activity_id="3279246878")
-    for act in activities_delete:
-        db.session.delete(act)
+def getstravacode():
+    strava_code = request.args.get('code', '')
+    username = current_user.username
+
+    access_token, refresh_token, expires_at = get_tokens_w_c(strava_code)
+
+    user = User.query.filter_by(username=username).first()
+    user.strava_code = strava_code
+    user.access_token = access_token
+    user.refresh_token = refresh_token
+    user.expires_at = expires_at
     db.session.commit()
+
+    athlete_id = get_ath_id(access_token)
 
     username = current_user.username
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
 
-    return render_template("index.html", embed_url=embed_url)
+    return render_template("index.html", user=user, embed_url=embed_url)
+
+
+@app.route('/activity_stats', methods=['GET', 'POST'])
+@login_required
+def activity_stats():
+    act_streams = ''
+    my_image_url = ''
+    username = current_user.username
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(activity_id)
+        access_token = get_access_token()
+        act_streams = get_act_streams(access_token, activity_id)
+        # print(act_streams['latlng'])
+
+        lat_lng_data = act_streams['latlng']
+        normalised_route = norm_data(lat_lng_data)
+        my_image_string = drw_route(normalised_route)
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        my_image_url = post_img(api_key, my_image_string)
+
+
+    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams, my_image_url=my_image_url))
+    return response
+
+
+@app.route('/running')
+@login_required
+def running():
+    username = current_user.username
+    location = "looks/6"
+    embed_url = generate_embed_url(username, location)
+    response = make_response(render_template('running.html', title='Running', embed_url=embed_url))
+    response.set_cookie('same-site-cookie', 'https://lookersandbox.com', samesite=None);
+    response.set_cookie('cross-site-cookie', 'https://lookersandbox.com', samesite=None, secure=True)
+    return response
+
+
+@app.route('/parkrun')
+@login_required
+def parkrun():
+    username = current_user.username
+    location = "dashboards/8"
+    embed_url = generate_embed_url(username, location)
+    response = make_response(render_template('parkrun.html', title='Parkrun', embed_url=embed_url))
+
+    response.set_cookie('same-site-cookie', 'lookersandbox.com', samesite='Lax');
+    response.set_cookie('cross-site-cookie', 'lookersandbox.com', samesite='Lax', secure=True)
+    return response
+
 
 @app.route("/update_athlete_id", methods=["GET", "POST"])
 @login_required
@@ -573,25 +464,6 @@ def update_athlete_id():
 
     return render_template("index.html", user=user, embed_url=embed_url)
 
-@app.route('/test', methods = ['GET', 'POST'])
-def test():
-    if request.form:
-        username = request.form.get('username')
-        password = request.form.get('password')
-        print(username)
-        print(password)
-    return render_template("test.html", filename='main.css')
-
-def parse_request(req):
-    """
-    Parses application/json request body data into a Python dictionary
-    """
-    payload = req.get_data()
-    # payload = unquote_plus(payload)
-    # payload = re.sub('payload=', '', payload)
-    payload = json.loads(payload)
-
-    return payload
 
 @app.route('/json_payload', methods = ['GET', 'POST'])
 def json_payload():
@@ -602,6 +474,7 @@ def json_payload():
     payload = parse_request(request)
     print(payload)
     return render_template("index.html")
+
 
 @app.route('/slack', methods=['POST'])
 def inbound():
