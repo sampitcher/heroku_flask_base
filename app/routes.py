@@ -303,7 +303,6 @@ def sync():
             name_id=activity['name']+'_'+str(activity['activity_id']),
             streams=act_streams_interpolated,
             maxs=rolling_dict,
-            icon_url = image_url,
             author=current_user)
         db.session.add(activity)
         db.session.commit()
