@@ -195,9 +195,9 @@ def update_activity(activity_id=None):
         print(f'Updated Activity ID {activity_id}')
         return True
 
-##########
-# ROUTES #
-##########
+###############
+# BASE ROUTES #
+###############
 
 @app.route('/')
 
@@ -355,6 +355,13 @@ def update_activity_id():
     embed_url = generate_embed_url(username, location)
 
     return render_template("index.html", user=user, embed_url=embed_url)
+
+
+@app.route('/activities', methods = ['GET', 'POST'])
+@login_required
+def activities():
+    # USE LOOKER API TO RETURN RESULTS OF STRAVA ACTIVITES LOOK 5
+    return render_template("index.html", user=user)
 
 
 @app.route('/get_activity', methods = ['GET', 'POST'])
