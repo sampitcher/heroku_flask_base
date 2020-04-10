@@ -215,7 +215,6 @@ def sync():
     # max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
 
     print(max_epoch)
-    print(type(max_epoch))
 
     activities = get_acts(access_token, max_epoch)
 
@@ -266,6 +265,8 @@ def sync():
             rolling_dict[f'max_hr_{i}'] = max_hr
             rolling_dict[f'max_power_{i}'] = max_power
             rolling_dict[f'max_speed_{i}'] = max_speed
+        
+        # print(rolling_dict)
         
         ##################
         # ACTIVITY IMAGE #
