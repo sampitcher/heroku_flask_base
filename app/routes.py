@@ -181,6 +181,15 @@ def sync_activities(activity_id=None):
     # return render_template("index.html", user=user, embed_url=embed_url)
     return True
 
+def update_activity(activity_id=None):
+    if activity_id == None:
+        print('No Activity ID...')
+        return True
+    else:
+        delete_activity(activity_id)
+        sync_activities(activity_id)
+        print(f'Updated Activity ID {activity_id}')
+        return True
 
 @app.route('/')
 
@@ -368,6 +377,20 @@ def delete_activity_id():
         activity_id = request.form.get('activity_id')
         print(f'User selected to delete the Activity ID: {activity_id}')
         delete_activity(activity_id)
+    
+    username = current_user.username
+    location = "dashboards/7"
+    embed_url = generate_embed_url(username, location)
+
+    return render_template("index.html", user=user, embed_url=embed_url)
+
+@app.route('/update_activity_id', methods = ['GET', 'POST'])
+@login_required
+def update_activity_id():
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(f'User selected to delete the Activity ID: {activity_id}')
+        update_activity(activity_id)
     
     username = current_user.username
     location = "dashboards/7"
