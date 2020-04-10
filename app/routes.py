@@ -247,7 +247,7 @@ def sync():
         rollings = [1,5,10,20,30,45,60,120,300,600,1200]
         rolling_dict = {}
         for i in rollings:
-            rolling_avg = df_final.replace({np.nan:None}).rolling(i, win_type='triang').mean()
+            rolling_avg = df_final.rolling(i, win_type='triang').mean()
             maxs = rolling_avg.max()
             try:
                 max_hr = maxs.heartrate
@@ -267,6 +267,15 @@ def sync():
             rolling_dict[f'max_speed_{i}'] = max_speed
         
         print(rolling_dict)
+        for i in rolling_dict:
+            print(f'{i}: {rolling_dict[i]}')
+            try:
+                if rolling_dict[i] >= 0:
+                    pass
+                else:
+                    rolling_dict[i] = None
+            except:
+                rolling_dict[i] = None
         
         ##################
         # ACTIVITY IMAGE #
