@@ -247,7 +247,7 @@ def sync():
         rollings = [1,5,10,20,30,45,60,120,300,600,1200]
         rolling_dict = {}
         for i in rollings:
-            rolling_avg = df_final.rolling(i, win_type='triang').mean()
+            rolling_avg = df_final.replace({np.nan:None}).rolling(i, win_type='triang').mean()
             maxs = rolling_avg.max()
             try:
                 max_hr = maxs.heartrate
