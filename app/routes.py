@@ -211,11 +211,11 @@ def sync():
     access_token = get_access_token()
     print(f'user id: {user_id}')
 
+    # Find the latest activity epoch in database
     max_epoch = db.session.query(db.func.max(Activity.epoch)).filter(Activity.user_id == user_id).scalar()
-    # max_epoch = db.session.query(db.func.max(Activity.epoch)).scalar()
+    print(f'Last epoch: {max_epoch}')
 
-    print(max_epoch)
-
+    # Get an array of 1 activities (when writing it's only one activity)
     activities = get_acts(access_token, max_epoch)
 
     for activity in activities:
@@ -266,7 +266,7 @@ def sync():
             rolling_dict[f'max_power_{i}'] = max_power
             rolling_dict[f'max_speed_{i}'] = max_speed
         
-        # print(rolling_dict)
+        print(rolling_dict)
         
         ##################
         # ACTIVITY IMAGE #
