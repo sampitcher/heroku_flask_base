@@ -56,7 +56,8 @@ def draw_route(data):
         except:
             x2 = data[i][0]
             y2 = data[i][1]
-        draw_img.line((x1,y1,x2,y2), width=2, fill=(25,25,112))
+        # draw_img.line((x1,y1,x2,y2), width=2, fill=(25,25,112))
+        draw_img.line((x1,y1,x2,y2), width=3, fill=(255,255,255))
              
     # img.save('my_png.png')
 
