@@ -397,7 +397,7 @@ def activities():
         Activity.is_commute,
         Activity.duration,
         Activity.distance
-        ).filter(Activity.user_id == user_id).order_by(Activity.epoch.desc()).limit(10).all()
+        ).filter(Activity.user_id == user_id).order_by(Activity.epoch.desc()).limit(100).all()
     print(activities_sql)
     look_activities = []
     for u in activities_sql:
