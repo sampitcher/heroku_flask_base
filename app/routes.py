@@ -12,7 +12,7 @@ import json
 from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_streams as get_act_streams, get_activity_laps as get_act_laps
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
 from app.imager import normalise_data as norm_data, draw_route as drw_route, post_image_str as post_img
-from app.looker import get_activities as get_act_looker
+# from app.looker import get_activities as get_act_looker
 
 ##################
 # BASE FUNCTIONS #
