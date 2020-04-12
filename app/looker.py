@@ -1,9 +1,10 @@
-import looker_sdk
+from looker_sdk import client, models, error
 import urllib3
 import json
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-sdk = looker_sdk.init31("app/looker.ini", "PP")
+# sdk = looker_sdk.init31("app/looker.ini", "PP")
+sdk = client.setup("looker.ini", "PP")
 
 # my_user = sdk.me()
 # print(my_user)
