@@ -401,6 +401,12 @@ def activities():
     print(activities_sql)
     look_activities = []
     for u in activities_sql:
+        distance = float(u[8])
+        distance_km = str(round(1.0 * distance / 1000, 2)) + ' km'
+
+        duration = float(u[7])
+        duration_hhmmss = time.strftime('%H:%M:%S', time.gmtime(duration))
+
         temp_dict = {
             "epoch": u[0],
             "activity_date": u[1],
@@ -409,8 +415,8 @@ def activities():
             "name": u[4],
             "type": u[5],
             "is_commute": u[6],
-            "duration": u[7],
-            "distance": u[8]
+            "duration": duration_hhmmss,
+            "distance": distance_km
         }
         print(temp_dict)
         look_activities.append(temp_dict)
