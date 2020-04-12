@@ -403,7 +403,7 @@ def activities():
     for u in activities_sql:
         temp_dict = {
             "epoch": u[0],
-            "activity_date": u[1][:10],
+            "activity_date": u[1],
             "activity_id": u[2],
             "icon_url": u[3],
             "name": u[4],
