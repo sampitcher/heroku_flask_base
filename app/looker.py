@@ -4,7 +4,7 @@ import json
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # sdk = looker_sdk.init31("app/looker.ini", "PP")
-sdk = client.setup("looker.ini", "PP")
+sdk = client.setup("app/looker.ini", "PP")
 
 # my_user = sdk.me()
 # print(my_user)
