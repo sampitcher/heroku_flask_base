@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>activity stats</h2>
+    <h2>Activities</h2>
 
     {% if current_user.is_anonymous %}
 
@@ -13,24 +13,41 @@
 
     {% endif %}
 
-    <h3>Activites</h3>
- 
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Route</th>
+          <th scope="col">Date</th>
+          <th scope="col">Name</th>
+          <th scope="col">Type</th>
+          <th scope="col">Commute</th>
+          <th scope="col">Duration</th>
+          <th scope="col">Distance</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity in look_activities %}
+        <tr>
+          <td>{{ activity['activity.activity_id'] }}</td>
+          <td><img src={{ activity['activity.icon_url'] }} height=10%></td>
+          <td>{{ activity['activity.activity_date'] }}</td>
+          <td>{{ activity['activity.name'] }}</td>
+          <td>{{ activity['activity_grouping.type'] }}</td>
+          <td>{{ activity['activity.is_commute'] }}</td>
+          <td>{{ activity['activity.total_duration'] }}</td>
+          <td>{{ activity['activity.total_distance'] }}</td>
+          <td>
+            <form method="POST" action="/activities">
+              <button name="activity_id" type="submit" value="{{ activity['activity.activity_id'] }}">Update</button>
+            </form>
+          </td>
 
-    UPDATE ACTIVITY USING ID
-    <div class="container-fluid">
-        <form method="POST" action="/update_activity_id">
-              <div class="form-group">
-                <label>Activity ID</label>
-                <input type="text" class="form-control" name="activity_id">
-              </div>
-              <button type="submit" class="btn btn-primary">submit</button>
-        </form>
-    </div>
-
-    <div id="Container" style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
-        <p>3239298495, 3267868871, 3253194511</p>
-        <p><img src={{my_image_url}} width=30% height=30%></p>
-    </div>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
 </div>
 

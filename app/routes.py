@@ -12,6 +12,7 @@ import json
 from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_streams as get_act_streams, get_activity_laps as get_act_laps
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
 from app.imager import normalise_data as norm_data, draw_route as drw_route, post_image_str as post_img
+from app.looker import get_activities as get_act_looker
 
 ##################
 # BASE FUNCTIONS #
@@ -309,7 +310,7 @@ def sync():
     location = "dashboards/7"
     embed_url = generate_embed_url(username, location)
 
-    return render_template("index.html", user=user, embed_url=embed_url)
+    return render_template("activities.html", user=user, embed_url=embed_url)
 
 @app.route('/sync_activity_id', methods = ['GET', 'POST'])
 @login_required
@@ -361,7 +362,13 @@ def update_activity_id():
 @login_required
 def activities():
     # USE LOOKER API TO RETURN RESULTS OF STRAVA ACTIVITES LOOK 5
-    return render_template("index.html", user=user)
+    if request.form:
+        activity_id = request.form.get('activity_id')
+        print(activity_id)
+        update_activity(activity_id)
+    
+    look_activities = get_act_looker()
+    return render_template("activities.html", look_activities=look_activities)
 
 
 @app.route('/get_activity', methods = ['GET', 'POST'])
@@ -369,6 +376,8 @@ def activities():
 def get_activity():
     if request.form:
         activity_id = request.form.get('activity_id')
+        # update_activity(activity_id)
+        print(activity_id)
 
     access_token = get_access_token()
     get_act(access_token, activity_id)
