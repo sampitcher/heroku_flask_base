@@ -363,11 +363,59 @@ def update_activity_id():
 def activities():
     # USE LOOKER API TO RETURN RESULTS OF STRAVA ACTIVITES LOOK 5
     if request.form:
-        activity_id = request.form.get('activity_id')
-        print(activity_id)
-        update_activity(activity_id)
+        try:
+            activity_id_update = request.form.get('activity_id_update')
+            print(activity_id_update)
+            update_activity(activity_id_update)
+        except:
+            pass
+
+        try:
+            activity_id_delete = request.form.get('activity_id_delete')
+            print(activity_id_delete)
+            delete_activity(activity_id_delete)
+        except:
+            pass
+        
+        try:
+            activity_id_sync = request.form.get('activity_id_sync')
+            print(activity_id_sync)
+            sync_activities(activity_id_sync)
+        except:
+            pass
     
-    look_activities = get_act_looker()
+    username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    user_id = user.id
+    activities_sql = db.session.query(
+        Activity.epoch,
+        Activity.timestamp,
+        Activity.activity_id,
+        Activity.icon_url,
+        Activity.name,
+        Activity.activity_type,
+        Activity.is_commute,
+        Activity.duration,
+        Activity.distance
+        ).filter(Activity.user_id == user_id).order_by(Activity.epoch.desc()).limit(10).all()
+    print(activities_sql)
+    look_activities = []
+    for u in activities_sql:
+        temp_dict = {
+            "epoch": u[0],
+            "activity_date": u[1][:10],
+            "activity_id": u[2],
+            "icon_url": u[3],
+            "name": u[4],
+            "type": u[5],
+            "is_commute": u[6],
+            "duration": u[7],
+            "distance": u[8]
+        }
+        print(temp_dict)
+        look_activities.append(temp_dict)
+    print(look_activities)
+
     return render_template("activities.html", look_activities=look_activities)
 
 

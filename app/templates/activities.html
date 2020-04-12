@@ -13,6 +13,17 @@
 
     {% endif %}
 
+    ADD ACTIVITY USING ID
+    <div class="container-fluid">
+        <form method="POST" action="/activities">
+              <div class="form-group">
+                <label>Activity ID</label>
+                <input type="text" class="form-control" name="activity_id_sync">
+              </div>
+              <button type="submit" class="btn btn-primary">submit</button>
+        </form>
+    </div>
+
     <table class="table table-hover">
       <thead>
         <tr>
@@ -22,25 +33,30 @@
           <th scope="col">Name</th>
           <th scope="col">Type</th>
           <th scope="col">Commute</th>
-          <th scope="col">Duration</th>
           <th scope="col">Distance</th>
+          <th scope="col">Duration</th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
         {% for activity in look_activities %}
         <tr>
-          <td>{{ activity['activity.activity_id'] }}</td>
-          <td><img src={{ activity['activity.icon_url'] }} height=10%></td>
-          <td>{{ activity['activity.activity_date'] }}</td>
-          <td>{{ activity['activity.name'] }}</td>
-          <td>{{ activity['activity_grouping.type'] }}</td>
-          <td>{{ activity['activity.is_commute'] }}</td>
-          <td>{{ activity['activity.total_duration'] }}</td>
-          <td>{{ activity['activity.total_distance'] }}</td>
+          <td>{{ activity['activity_id'] }}</td>
+          <td><img src={{ activity['icon_url'] }} height=10%></td>
+          <td>{{ activity['activity_date'] }}</td>
+          <td>{{ activity['name'] }}</td>
+          <td>{{ activity['type'] }}</td>
+          <td>{{ activity['is_commute'] }}</td>
+          <td>{{ activity['distance'] }}</td>
+          <td>{{ activity['duration'] }}</td>
           <td>
             <form method="POST" action="/activities">
-              <button name="activity_id" type="submit" value="{{ activity['activity.activity_id'] }}">Update</button>
+              <button name="activity_id_update" type="submit" value="{{ activity['activity_id'] }}">Update</button>
+            </form>
+          </td>
+          <td>
+            <form method="POST" action="/activities">
+              <button name="activity_id_delete" type="submit" value="{{ activity['activity_id'] }}">Delete</button>
             </form>
           </td>
 
