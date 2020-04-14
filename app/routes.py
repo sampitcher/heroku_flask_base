@@ -425,11 +425,19 @@ def activities():
     return render_template("activities.html", look_activities=look_activities)
 
 
+@app.route('/mappa')
+@login_required
+def mappa():
+    response = make_response(render_template('mappa.html', title='Mappa'))
+    return response
+
+
 @app.route('/commute_ml')
 @login_required
 def commute_ml():
     response = make_response(render_template('commute_ml.html', title='Commute ML'))
     return response
+
 
 @app.route('/get_activity', methods = ['GET', 'POST'])
 @login_required
