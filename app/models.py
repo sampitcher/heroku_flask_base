@@ -84,6 +84,7 @@ class Mappa(db.Model):
     icon_url = db.Column(db.String(128))
     altitude_url = db.Column(db.String(128))
     mappa_url = db.Column(db.String(128))
+    is_complete = db.Column(db.Boolean())
 
     def __repr__(self):
         return '<Mappa {}>'.format(self.name)
