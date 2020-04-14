@@ -65,6 +65,29 @@ class Activity(db.Model):
     def __repr__(self):
         return '<Activity {}>'.format(self.name)
 
+class Mappa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mappa_id = db.Column(db.String(140))
+    name = db.Column(db.String(140))
+    epoch = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    elevation = db.Column(db.String(64))
+    distance = db.Column(db.String(64))
+    duration = db.Column(db.String(64))
+    max_speed = db.Column(db.String(64))
+    avg_speed = db.Column(db.String(64))
+    max_power = db.Column(db.String(64))
+    avg_power = db.Column(db.String(64))
+    max_heartrate = db.Column(db.String(64))
+    avg_heartrate = db.Column(db.String(64))
+    name_id = db.Column(db.String(128))
+    icon_url = db.Column(db.String(128))
+    altitude_url = db.Column(db.String(128))
+    mappa_url = db.Column(db.String(128))
+
+    def __repr__(self):
+        return '<Mappa {}>'.format(self.name)
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
