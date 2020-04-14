@@ -142,13 +142,13 @@ def create_elevation_image(xaxis, yaxis, y2axis):
 	# elevation_image.save('app/static/temp/elevation_image.png')
 
 
-xs = [0,1,2,3,4,5,6]
-ys = [0,10,20,13,14,25,16]
-y2s = [0,0,0,0,0,0,0]
+# xs = [0,1,2,3,4,5,6]
+# ys = [0,10,20,13,14,25,16]
+# y2s = [0,0,0,0,0,0,0]
 
-if __name__ == '__main__':
-#     normalised_route = normalise_data(data)
-#     my_image_string = draw_route(normalised_route)
-    my_image_string = create_elevation_image(xs, ys, y2s)
-    my_image_url = post_image_str(api_key, my_image_string)
-    # print(my_image_url)
+# if __name__ == '__main__':
+# #     normalised_route = normalise_data(data)
+# #     my_image_string = draw_route(normalised_route)
+#     my_image_string = create_elevation_image(xs, ys, y2s)
+#     my_image_url = post_image_str(api_key, my_image_string)
+#     # print(my_image_url)
