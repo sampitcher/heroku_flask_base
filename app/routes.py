@@ -11,7 +11,7 @@ import json
 
 from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_streams as get_act_streams, get_activity_laps as get_act_laps
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
-from app.imager import normalise_data as norm_data, draw_route as drw_route, post_image_str as post_img
+from app.imager import normalise_data as norm_data, draw_route as drw_route, draw_elevation as drw_elevation, post_image_str as post_img
 # from app.looker import get_activities as get_act_looker
 
 ##################
@@ -485,7 +485,7 @@ def getstravacode():
 @login_required
 def activity_stats():
     act_streams = ''
-    my_image_url = ''
+    icon_image_url = ''
     username = current_user.username
     if request.form:
         activity_id = request.form.get('activity_id')
@@ -494,14 +494,20 @@ def activity_stats():
         act_streams = get_act_streams(access_token, activity_id)
         # print(act_streams['latlng'])
 
-        lat_lng_data = act_streams['latlng']
-        normalised_route = norm_data(lat_lng_data)
-        my_image_string = drw_route(normalised_route)
+        # lat_lng_data = act_streams['latlng']
+        # normalised_route = norm_data(lat_lng_data)
+        # icon_image_string = drw_route(normalised_route)
+        # api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        # icon_image_url = post_img(api_key, icon_image_string)
+
+        distance_data = act_streams['distance']
+        altitude_data = act_streams['altitude']
+        ys = [0]*len(distance_data)
+        icon_image_string = drw_elevation(distance_data, altitude_data, ys)
         api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
-        my_image_url = post_img(api_key, my_image_string)
+        icon_image_url = post_img(api_key, icon_image_string)
 
-
-    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams, my_image_url=my_image_url))
+    response = make_response(render_template('activity_stats.html', title='Activity Stats', act_streams=act_streams, icon_image_url=icon_image_url))
     return response
 
 

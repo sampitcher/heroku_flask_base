@@ -102,24 +102,33 @@ def post_image(api_key):
     print(res.json())
     return(image_url)
 
-def create_elevation_image(xaxis, yaxis, y2axis):
-    plt.figure(figsize=(9,6))
+def draw_elevation(xaxis, yaxis, y2axis):
+    # plt.figure(figsize=(9,6))
+    plt.figure(figsize=(10,2))
     plt.plot(xaxis,yaxis,color = 'deepskyblue', lw = 0.1, alpha = 0.8)
     plt.fill_between(xaxis, yaxis, y2axis, color="skyblue", alpha=0.6)
     plt.axis('off')
 
-	# filename = 'app/static/temp/elevation_image_raw.png'
-	# plt.savefig(filename, transparent=True, bbox_inches='tight', pad_inches=0, dpi=300)
-
-
     buffered = BytesIO()
-	# pic_IObytes = io.BytesIO()
     plt.savefig(buffered, format='png', transparent=True, bbox_inches='tight', pad_inches=0, dpi=300)
-	# pic_IObytes.seek(0)
-	# pic_hash = base64.b64encode(pic_IObytes.read())
-
     img_str = base64.b64encode(buffered.getvalue())
+    plt.close()
     return(img_str)
+
+
+
+# xs = [0,1,2,3,4,5,6]
+# ys = [0,10,20,13,14,25,16]
+# y2s = [0,0,0,0,0,0,0]
+
+# if __name__ == '__main__':
+# #     normalised_route = normalise_data(data)
+# #     my_image_string = draw_route(normalised_route)
+#     my_image_string = draw_elevation(xs, ys, y2s)
+#     my_image_url = post_image_str(api_key, my_image_string)
+#     # print(my_image_url)
+
+
 
 	# RESIZE ELEVATION IMAGE
 
@@ -136,19 +145,3 @@ def create_elevation_image(xaxis, yaxis, y2axis):
 	# basewidth = 1000
 	# wpercent = (basewidth/float(elevation_image.size[0]))
 	# elevation_image = elevation_image.resize((basewidth,hsize), Image.ANTIALIAS)
-
-    plt.close()
-
-	# elevation_image.save('app/static/temp/elevation_image.png')
-
-
-# xs = [0,1,2,3,4,5,6]
-# ys = [0,10,20,13,14,25,16]
-# y2s = [0,0,0,0,0,0,0]
-
-# if __name__ == '__main__':
-# #     normalised_route = normalise_data(data)
-# #     my_image_string = draw_route(normalised_route)
-#     my_image_string = create_elevation_image(xs, ys, y2s)
-#     my_image_url = post_image_str(api_key, my_image_string)
-#     # print(my_image_url)

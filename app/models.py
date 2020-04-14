@@ -60,6 +60,7 @@ class Activity(db.Model):
     streams = db.Column(db.JSON())
     maxs = db.Column(db.JSON())
     icon_url = db.Column(db.String(128))
+    altitude_url = db.Column(db.String(128))
 
     def __repr__(self):
         return '<Activity {}>'.format(self.name)
