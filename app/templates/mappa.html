@@ -121,55 +121,55 @@
       var layer = new Konva.Layer();
       stage.add(layer);
 
-      // darth vader
+      // darth vader - route
       var darthVaderImg = new Konva.Image({
-        width: 200,
-        height: 137
+        width: 300,
+        height: 300
       });
 
-      // yoda
+      // yoda - elevation
       var yodaImg = new Konva.Image({
-        width: 93,
-        height: 104
+        width: 1000,
+        height: 100
       });
 
       var darthVaderGroup = new Konva.Group({
-        x: 180,
-        y: 50,
+        x: 50,
+        y: 650,
         draggable: true
       });
       layer.add(darthVaderGroup);
       darthVaderGroup.add(darthVaderImg);
       addAnchor(darthVaderGroup, 0, 0, 'topLeft');
-      addAnchor(darthVaderGroup, 200, 0, 'topRight');
-      addAnchor(darthVaderGroup, 200, 138, 'bottomRight');
-      addAnchor(darthVaderGroup, 0, 138, 'bottomLeft');
+      addAnchor(darthVaderGroup, 300, 0, 'topRight');
+      addAnchor(darthVaderGroup, 300, 300, 'bottomRight');
+      addAnchor(darthVaderGroup, 0, 300, 'bottomLeft');
 
       var yodaGroup = new Konva.Group({
-        x: 20,
-        y: 110,
+        x: 0,
+        y: 900,
         draggable: true
       });
       layer.add(yodaGroup);
       yodaGroup.add(yodaImg);
       addAnchor(yodaGroup, 0, 0, 'topLeft');
-      addAnchor(yodaGroup, 93, 0, 'topRight');
-      addAnchor(yodaGroup, 93, 104, 'bottomRight');
-      addAnchor(yodaGroup, 0, 104, 'bottomLeft');
+      addAnchor(yodaGroup, 1000, 0, 'topRight');
+      addAnchor(yodaGroup, 1000, 100, 'bottomRight');
+      addAnchor(yodaGroup, 0, 100, 'bottomLeft');
 
       var imageObj1 = new Image();
       imageObj1.onload = function() {
         darthVaderImg.image(imageObj1);
         layer.draw();
       };
-      imageObj1.src = 'https://i.ibb.co/5xHv858/67380ced2f31.png';
+      imageObj1.src = '{{icon_url}}';
 
       var imageObj2 = new Image();
       imageObj2.onload = function() {
         yodaImg.image(imageObj2);
         layer.draw();
       };
-      imageObj2.src = '/assets/yoda.jpg';
+      imageObj2.src = '{{altitude_url}}';
     </script>
   </body>
 

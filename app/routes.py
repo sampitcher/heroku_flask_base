@@ -134,16 +134,21 @@ def sync_activities(activity_id=None):
             except:
                 rolling_dict[i] = None
         
-        ##################
-        # ACTIVITY IMAGE #
-        ##################
+        #################################
+        # ACTIVITY AND ELEVATION IMAGES #
+        #################################
 
         lat_lng_data = act_streams['latlng']
         normalised_route = norm_data(lat_lng_data)
         image_string = drw_route(normalised_route)
         api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
         image_url = post_img(api_key, image_string)
-        # image_url = 'test.png'
+
+        distance_data = act_streams['distance']
+        altitude_data = act_streams['altitude']
+        ys = [0]*len(distance_data)
+        elevation_image_string = drw_elevation(distance_data, altitude_data, ys)
+        elevation_image_url = post_img(api_key, elevation_image_string)
 
         activity = Activity(
             activity_id=activity['activity_id'],
@@ -171,6 +176,7 @@ def sync_activities(activity_id=None):
             streams=act_streams_interpolated,
             maxs=rolling_dict,
             icon_url=image_url,
+            altitude_url=elevation_image_url,
             author=current_user)
         db.session.add(activity)
         db.session.commit()
@@ -396,7 +402,8 @@ def activities():
         Activity.activity_type,
         Activity.is_commute,
         Activity.duration,
-        Activity.distance
+        Activity.distance,
+        Activity.altitude_url
         ).filter(Activity.user_id == user_id).order_by(Activity.epoch.desc()).limit(100).all()
     print(activities_sql)
     look_activities = []
@@ -416,7 +423,8 @@ def activities():
             "type": u[5],
             "is_commute": u[6],
             "duration": duration_hhmmss,
-            "distance": distance_km
+            "distance": distance_km,
+            "altitude_url": u[9]
         }
         print(temp_dict)
         look_activities.append(temp_dict)
@@ -425,10 +433,34 @@ def activities():
     return render_template("activities.html", look_activities=look_activities)
 
 
-@app.route('/mappa')
+@app.route('/mappa', methods = ['GET', 'POST'])
 @login_required
 def mappa():
-    response = make_response(render_template('mappa.html', title='Mappa'))
+    if request.form:
+        activity_id_mappa = request.form.get('activity_id_mappa')
+        print(activity_id_mappa)
+            
+        username = current_user.username
+        user = User.query.filter_by(username=username).first()
+        user_id = user.id
+        activities_sql = db.session.query(
+            Activity.activity_id,
+            Activity.icon_url,
+            Activity.name,
+            Activity.duration,
+            Activity.distance,
+            Activity.altitude_url
+            ).filter(
+                Activity.user_id == user_id,
+                Activity.activity_id == activity_id_mappa
+                ).all()
+        icon_url = activities_sql[0][1]
+        name = activities_sql[0][2]
+        duration = activities_sql[0][3]
+        distance = activities_sql[0][4]
+        altitude_url = activities_sql[0][5]
+    
+    response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name=name, duration=duration, distance=distance, altitude_url=altitude_url))
     return response
 
 

@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 # data = [[10, -100], [15, -20], [20, 40], [20, 60], [15, 80], [15, 100]]
 
 def normalise_data(data):
+    sizing = 1000
     data = data[1:-1]
     df = pd.DataFrame(data)
     # print(df)
@@ -21,16 +22,16 @@ def normalise_data(data):
 
     if df_x_diff < df_y_diff:
         x_y_diff = df_x_diff / df_y_diff
-        weight = (1000-(1000*x_y_diff))/2
+        weight = (sizing-(sizing*x_y_diff))/2
         # weight = 0
-        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*1000*x_y_diff
+        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*sizing*x_y_diff
         norm_x = norm_x.add(weight)
-        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*1000
+        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*sizing
     else:
         x_y_diff = df_y_diff / df_x_diff
-        weight = (1000-x_y_diff)/2
-        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*1000
-        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*1000*x_y_diff
+        weight = (sizing-x_y_diff)/2
+        norm_x = ((df_x-df_x.min())/(df_x.max()-df_x.min()))*sizing
+        norm_y = ((df_y-df_y.min())/(df_y.max()-df_y.min()))*sizing*x_y_diff
         norm_y = norm_y.add(weight)
 
     norm_df = pd.concat([norm_x,norm_y], axis=1)
@@ -44,7 +45,8 @@ def normalise_data(data):
     return norm_data
 
 def draw_route(data):
-    img = Image.new('RGBA', (1000, 1000))
+    sizing = 1000
+    img = Image.new('RGBA', (sizing, sizing))
     draw_img = ImageDraw.Draw(img)
      
     for i in range(len(data)):
@@ -58,7 +60,7 @@ def draw_route(data):
             x2 = data[i][0]
             y2 = data[i][1]
         # draw_img.line((x1,y1,x2,y2), width=2, fill=(25,25,112))
-        draw_img.line((x1,y1,x2,y2), width=3, fill=(255,255,255))
+        draw_img.line((x1,y1,x2,y2), width=5, fill=(255,255,255))
              
     # img.save('my_png.png')
 
@@ -104,7 +106,7 @@ def post_image(api_key):
 
 def draw_elevation(xaxis, yaxis, y2axis):
     # plt.figure(figsize=(9,6))
-    plt.figure(figsize=(10,2))
+    plt.figure(figsize=(14,2))
     plt.plot(xaxis,yaxis,color = 'deepskyblue', lw = 0.1, alpha = 0.8)
     plt.fill_between(xaxis, yaxis, y2axis, color="skyblue", alpha=0.6)
     plt.axis('off')
