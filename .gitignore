@@ -1,6 +1,6 @@
-# .DS_Store
-# /__pycache__/*
-# app.db
-# app/__pycache__
-# /.mypy_cache/*
-# /.vscode/*
+.DS_Store
+/__pycache__/*
+app.db
+app/__pycache__
+/.mypy_cache/*
+/.vscode/*
