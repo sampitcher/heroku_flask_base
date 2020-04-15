@@ -29,6 +29,9 @@
   <button id="save">
     Save as image
   </button>
+  <button id="data">
+    Add Data
+  </button>
 </div>
 
 
@@ -212,6 +215,19 @@
       imageObj2.crossOrigin = 'Anonymous';
       imageObj2.src = '{{altitude_url}}';
 
+      function addText() {
+        var simpleText = new Konva.Text({
+          x: stage.width() / 2,
+          y: 40,
+          text: 'Simple Text',
+          fontSize: 40,
+          fontFamily: 'Arial',
+          fill: 'white'
+        });
+        layer.add(simpleText);
+        stage.add(layer);
+      }
+
       function downloadURI(uri, name) {
         var link = document.createElement('a');
         link.download = name;
@@ -239,8 +255,30 @@
         false
       );
 
+      document.getElementById('data').addEventListener(
+        'click',
+        function() {
+          console.log('adding data');
+          addText();
+        },
+        false
+      );
+
     </script>
   </body>
 </div>
+
+{{activity_id}}
+{{icon_url}}
+{{name}}
+{{altitude_url}}
+{{max_speed}}
+{{avg_speed}}
+{{max_power}}
+{{avg_power}}
+{{max_heartrate}}
+{{avg_heartrate}}
+{{duration}}
+{{distance}}
 
 {% endblock %}

@@ -436,20 +436,30 @@ def activities():
 @app.route('/mappa', methods = ['GET', 'POST'])
 @login_required
 def mappa():
+    username = current_user.username
+    user = User.query.filter_by(username=username).first()
+    user_id = user.id
+
     if request.form.get('activity_id_mappa') != None:
         activity_id_mappa = request.form.get('activity_id_mappa')
         print(activity_id_mappa)
             
-        username = current_user.username
-        user = User.query.filter_by(username=username).first()
-        user_id = user.id
+        # username = current_user.username
+        # user = User.query.filter_by(username=username).first()
+        # user_id = user.id
         activities_sql = db.session.query(
             Activity.activity_id,
             Activity.icon_url,
             Activity.name,
             Activity.duration,
             Activity.distance,
-            Activity.altitude_url
+            Activity.altitude_url,
+            Activity.max_speed,
+            Activity.avg_speed,
+            Activity.max_power,
+            Activity.avg_power,
+            Activity.max_heartrate,
+            Activity.avg_heartrate
             ).filter(
                 Activity.user_id == user_id,
                 Activity.activity_id == activity_id_mappa
@@ -459,18 +469,42 @@ def mappa():
         duration = activities_sql[0][3]
         distance = activities_sql[0][4]
         altitude_url = activities_sql[0][5]
+        max_speed = activities_sql[0][6]
+        avg_speed = activities_sql[0][7]
+        max_power = activities_sql[0][8]
+        avg_power = activities_sql[0][9]
+        max_heartrate = activities_sql[0][10]
+        avg_heartrate = activities_sql[0][11]
 
         mappa_image = Mappa(
             activity_id=activity_id_mappa,
             name=name,
             epoch=time.time(),
-            user_id=2,
+            user_id=user_id,
             icon_url=icon_url,
-            altitude_url=altitude_url)
+            altitude_url=altitude_url,
+            max_speed = max_speed,
+            avg_speed = avg_speed,
+            max_power = max_power,
+            avg_power = avg_power,
+            max_heartrate = max_heartrate,
+            avg_heartrate = avg_heartrate)
         db.session.add(mappa_image)
         db.session.commit()
 
-        response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name=name, duration=duration, distance=distance, altitude_url=altitude_url))
+        response = make_response(render_template('mappa.html',
+        title='Mappa',
+        icon_url=icon_url,
+        name=name,
+        duration=duration,
+        distance=distance,
+        altitude_url=altitude_url,
+        max_speed = max_speed,
+        avg_speed = avg_speed,
+        max_power = max_power,
+        avg_power = avg_power,
+        max_heartrate = max_heartrate,
+        avg_heartrate = avg_heartrate))
         return response
     
     if request.method == 'POST':
@@ -482,16 +516,45 @@ def mappa():
             Mappa.activity_id,
             Mappa.icon_url,
             Mappa.name,
-            Mappa.altitude_url
+            Mappa.altitude_url,
+            Mappa.max_speed,
+            Mappa.avg_speed,
+            Mappa.max_power,
+            Mappa.avg_power,
+            Mappa.max_heartrate,
+            Mappa.avg_heartrate,
+            Mappa.duration,
+            Mappa.distance
             ).order_by(Mappa.epoch.desc()).limit(1).all()
         activity_id = mappa_sql[0][0]
         icon_url = mappa_sql[0][1]
         name = mappa_sql[0][2]
         altitude_url = mappa_sql[0][3]
-        response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name='', duration='', distance='', altitude_url=altitude_url, background_url=background_url))
+        max_speed = mappa_sql[0][4]
+        avg_speed = mappa_sql[0][5]
+        max_power = mappa_sql[0][6]
+        avg_power = mappa_sql[0][7]
+        max_heartrate = mappa_sql[0][8]
+        avg_heartrate = mappa_sql[0][9]
+        duration = mappa_sql[0][10]
+        distance = mappa_sql[0][11]
+        response = make_response(render_template('mappa.html',
+        title='Mappa',
+        icon_url=icon_url,
+        name='',
+        duration='',
+        distance='',
+        altitude_url=altitude_url,
+        background_url=background_url))
         return response
     
-    response = make_response(render_template('mappa.html', title='Mappa', icon_url='', name='', duration='', distance='', altitude_url=''))
+    response = make_response(render_template('mappa.html',
+    title='Mappa',
+    icon_url='',
+    name='',
+    duration='',
+    distance='',
+    altitude_url=''))
     return response
 
 
