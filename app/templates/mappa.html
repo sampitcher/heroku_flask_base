@@ -29,8 +29,20 @@
   <button id="save">
     Save as image
   </button>
-  <button id="data">
-    Add Data
+  <button id="name">
+    Name
+  </button>
+  <button id="distance">
+      Distance
+  </button>
+  <button id="duration">
+      Duration
+  </button>
+  <button id="max_speed">
+    Max Speed
+  </button>
+  <button id="avg_speed">
+    Average Speed
   </button>
 </div>
 
@@ -43,6 +55,9 @@
   <body>
     <div id="container"></div>
     <script>
+      var topics = [];
+      var topics_clean = [];
+
       var width = window.innerWidth;
       var height = window.innerHeight;
 
@@ -215,18 +230,41 @@
       imageObj2.crossOrigin = 'Anonymous';
       imageObj2.src = '{{altitude_url}}';
 
-      function addText() {
-        var simpleText = new Konva.Text({
-          x: stage.width() / 2,
-          y: 40,
-          text: 'Simple Text',
-          fontSize: 40,
-          fontFamily: 'Arial',
-          fill: 'white'
-        });
-        layer.add(simpleText);
-        stage.add(layer);
+      var text_layer = new Konva.Layer();
+
+      function addTextOld() {
+        text_layer.destroy();
+        
+        for (i = 0, len = topics.length, text = ""; i < len; i++) {
+          var topic = topics[i];
+          var simpleText = new Konva.Text({
+            x: stage.width() / 2,
+            y: 40 + i*50,
+            text: topics_clean[i],
+            fontSize: 40,
+            fontFamily: 'Arial',
+            fill: 'white',
+          });
+          text_layer.add(simpleText);
+          textGroup.add(text_layer);
+        }
+        stage.add(text_layer);
       }
+
+      function addText() {
+        text_layer.destroy();
+          var simpleText = new Konva.Text({
+            x: stage.width() / 2,
+            y: 40,
+            draggable: true,
+            text: topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""),
+            fontSize: 40,
+            fontFamily: 'Arial',
+            fill: 'white',
+          });
+          text_layer.add(simpleText);
+          stage.add(text_layer);
+        }
 
       function downloadURI(uri, name) {
         var link = document.createElement('a');
@@ -255,10 +293,107 @@
         false
       );
 
-      document.getElementById('data').addEventListener(
+      document.getElementById('name').addEventListener(
         'click',
         function() {
+          var index = topics.indexOf('name');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("name")
+            topics_clean.push('{{name}}\n')
+          }
           console.log('adding data');
+          console.log(topics);
+          console.log(topics_clean);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('max_speed').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('max_speed');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("max_speed")
+            topics_clean.push('{{max_speed}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('avg_speed').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('avg_speed');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("avg_speed")
+            topics_clean.push('{{avg_speed}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('distance').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('distance');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("distance")
+            topics_clean.push('{{distance}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('duration').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('duration');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("duration")
+            topics_clean.push('{{duration}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
           addText();
         },
         false
@@ -268,9 +403,9 @@
   </body>
 </div>
 
-{{activity_id}}
-{{icon_url}}
 {{name}}
+{{icon_url}}
+{{activity_id}}
 {{altitude_url}}
 {{max_speed}}
 {{avg_speed}}

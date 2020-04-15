@@ -443,10 +443,7 @@ def mappa():
     if request.form.get('activity_id_mappa') != None:
         activity_id_mappa = request.form.get('activity_id_mappa')
         print(activity_id_mappa)
-            
-        # username = current_user.username
-        # user = User.query.filter_by(username=username).first()
-        # user_id = user.id
+
         activities_sql = db.session.query(
             Activity.activity_id,
             Activity.icon_url,
@@ -466,11 +463,13 @@ def mappa():
                 ).all()
         icon_url = activities_sql[0][1]
         name = activities_sql[0][2]
-        duration = activities_sql[0][3]
-        distance = activities_sql[0][4]
+        # duration = 'Duration: '+str(time.strftime('%H:%M:%S', str(time.gmtime(int(activities_sql[0][3])))))
+        duration_raw = activities_sql[0][3]
+        duration = 'Duration: '+str(time.strftime('%H:%M:%S', time.gmtime(int(duration_raw))))
+        distance = 'Distance: '+str(round(float(activities_sql[0][4]) / 1000, 2))+' km'
         altitude_url = activities_sql[0][5]
-        max_speed = activities_sql[0][6]
-        avg_speed = activities_sql[0][7]
+        max_speed = 'Max Speed: '+str(float(activities_sql[0][6]) * 3.6)+' km/h'
+        avg_speed = 'Avg Speed: '+str(float(activities_sql[0][7]) * 3.6)+' km/h'
         max_power = activities_sql[0][8]
         avg_power = activities_sql[0][9]
         max_heartrate = activities_sql[0][10]
@@ -485,6 +484,8 @@ def mappa():
             altitude_url=altitude_url,
             max_speed = max_speed,
             avg_speed = avg_speed,
+            distance = distance,
+            duration = duration,
             max_power = max_power,
             avg_power = avg_power,
             max_heartrate = max_heartrate,
@@ -541,10 +542,16 @@ def mappa():
         response = make_response(render_template('mappa.html',
         title='Mappa',
         icon_url=icon_url,
-        name='',
-        duration='',
-        distance='',
+        name=name,
+        duration=duration,
+        distance=distance,
         altitude_url=altitude_url,
+        max_speed = max_speed,
+        avg_speed = avg_speed,
+        max_power = max_power,
+        avg_power = avg_power,
+        max_heartrate = max_heartrate,
+        avg_heartrate = avg_heartrate,
         background_url=background_url))
         return response
     
