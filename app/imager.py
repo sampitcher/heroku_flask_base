@@ -99,6 +99,7 @@ def post_image_file(api_key, file):
     res = requests.post(base_url, payload)
 
     image_url = res.json()['data']['url']
+    print('done uploading')
     # print(image_url)
     # print(res.json())
     return(image_url)
