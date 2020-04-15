@@ -95,7 +95,8 @@ def get_num_of_activities(access_token, athlete_id):
 
 def get_activities(access_token, max_time=0):
     if max_time is None:
-        max_time = 0
+        # max_time = 0
+        max_time = time.time() - 604800
 
     auth_url_2 = "https://www.strava.com/oauth/token?client_id={}&client_secret={}".format(client_id, client_secret)
 
