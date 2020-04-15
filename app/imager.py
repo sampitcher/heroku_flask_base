@@ -89,6 +89,20 @@ def post_image_str(api_key, image_str):
 
     return(image_url)
 
+def post_image_file(api_key, file):
+    session = requests.Session()
+    base_url = "https://api.imgbb.com/1/upload"
+    payload = {
+        "key": api_key,
+        "image": base64.b64encode(file.read())
+        }
+    res = requests.post(base_url, payload)
+
+    image_url = res.json()['data']['url']
+    # print(image_url)
+    # print(res.json())
+    return(image_url)
+
 def post_image(api_key):
     session = requests.Session()
     with open("cat.png", "rb") as file:

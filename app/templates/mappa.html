@@ -15,7 +15,23 @@
 
     <p>This will be a page where you can create a custom image with your activity data</p>
 
+    <div class="container-fluid">
+      <form method="POST" action="/mappa" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Image</label>
+              <input type="file" class="btn btn-primary" name="file"><button type="submit" class="btn btn-primary">submit</button>
+            </div>
+      </form>
+    </div>
+
 </div>
+<div id="buttons">
+  <button id="save">
+    Save as image
+  </button>
+</div>
+
+
 <div class="w-100 p-3" role="presentation" style="position: relative; user-select: none; width: 1000; height: 1000;">
   <canvas class='img-responsive' width="1000" height="1000" style="padding: 0px; margin: 0px; border: 0px; background: 'black'; position: absolute; top: 0px; left: 0px; width: 1000; height: 1000; display: block;">
   </canvas>
@@ -124,14 +140,14 @@
 
       // darth vader - route
       var darthVaderImg = new Konva.Image({
-        width: 300,
-        height: 300
+        width: 400,
+        height: 400
       });
 
       // yoda - elevation
       var yodaImg = new Konva.Image({
         width: 1000,
-        height: 100
+        height: 200
       });
 
       // background
@@ -148,41 +164,43 @@
       backgroundGroup.add(backgroundImg);
 
       var darthVaderGroup = new Konva.Group({
-        x: 0,
-        y: 600,
+        x: 50,
+        y: 550,
         draggable: true
       });
       layer.add(darthVaderGroup);
       darthVaderGroup.add(darthVaderImg);
       addAnchor(darthVaderGroup, 0, 0, 'topLeft');
-      addAnchor(darthVaderGroup, 300, 0, 'topRight');
-      addAnchor(darthVaderGroup, 300, 300, 'bottomRight');
-      addAnchor(darthVaderGroup, 0, 300, 'bottomLeft');
+      addAnchor(darthVaderGroup, 450, 0, 'topRight');
+      addAnchor(darthVaderGroup, 450, 450, 'bottomRight');
+      addAnchor(darthVaderGroup, 0, 450, 'bottomLeft');
 
       var yodaGroup = new Konva.Group({
         x: 0,
-        y: 900,
+        y: 800,
         draggable: true
       });
       layer.add(yodaGroup);
       yodaGroup.add(yodaImg);
       addAnchor(yodaGroup, 0, 0, 'topLeft');
       addAnchor(yodaGroup, 1000, 0, 'topRight');
-      addAnchor(yodaGroup, 1000, 100, 'bottomRight');
-      addAnchor(yodaGroup, 0, 100, 'bottomLeft');
+      addAnchor(yodaGroup, 1000, 200, 'bottomRight');
+      addAnchor(yodaGroup, 0, 200, 'bottomLeft');
 
       var imageObj3 = new Image();
       imageObj3.onload = function() {
         backgroundImg.image(imageObj3);
         layer.draw();
       };
-      imageObj3.src = 'https://i.ibb.co/8Dbcwt2/234d93d76162194659e7a29c0360004c.jpg';
+      imageObj3.crossOrigin = 'Anonymous';
+      imageObj3.src = '{{background_url}}';
 
       var imageObj1 = new Image();
       imageObj1.onload = function() {
         darthVaderImg.image(imageObj1);
         layer.draw();
       };
+      imageObj1.crossOrigin = 'Anonymous';
       imageObj1.src = '{{icon_url}}';
 
       var imageObj2 = new Image();
@@ -190,7 +208,28 @@
         yodaImg.image(imageObj2);
         layer.draw();
       };
+      imageObj2.crossOrigin = 'Anonymous';
       imageObj2.src = '{{altitude_url}}';
+
+      function downloadURI(uri, name) {
+        var link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        delete link;
+      }
+
+      document.getElementById('save').addEventListener(
+        'click',
+        function() {
+          var dataURL = stage.toDataURL();
+          console.log(dataURL);
+          downloadURI(dataURL, 'stage.png');
+        },
+        false
+      );
 
     </script>
   </body>

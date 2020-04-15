@@ -3,7 +3,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Activity
+from app.models import User, Activity, Mappa
 import pandas as pd
 import numpy as np
 import time
@@ -11,7 +11,7 @@ import json
 
 from app.strava_sdk import get_tokens_with_code as get_tokens_w_c, get_tokens_with_refresh_token as get_tokens_w_rt, get_activities as get_acts, get_athlete_id as get_ath_id, get_num_of_activities as get_num_acts, get_activity as get_act, get_activity_streams as get_act_streams, get_activity_laps as get_act_laps
 from app.pbl import get_embed_user as pbl_get_user, generate as pbl_generate
-from app.imager import normalise_data as norm_data, draw_route as drw_route, draw_elevation as drw_elevation, post_image_str as post_img
+from app.imager import normalise_data as norm_data, draw_route as drw_route, draw_elevation as drw_elevation, post_image_str as post_img, post_image_file as post_img_file
 # from app.looker import get_activities as get_act_looker
 
 ##################
@@ -436,7 +436,7 @@ def activities():
 @app.route('/mappa', methods = ['GET', 'POST'])
 @login_required
 def mappa():
-    if request.form:
+    if request.form.get('activity_id_mappa') != None:
         activity_id_mappa = request.form.get('activity_id_mappa')
         print(activity_id_mappa)
             
@@ -459,8 +459,39 @@ def mappa():
         duration = activities_sql[0][3]
         distance = activities_sql[0][4]
         altitude_url = activities_sql[0][5]
+
+        mappa_image = Mappa(
+            activity_id=activity_id_mappa,
+            name=name,
+            epoch=time.time(),
+            user_id=2,
+            icon_url=icon_url,
+            altitude_url=altitude_url)
+        db.session.add(mappa_image)
+        db.session.commit()
+
+        response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name=name, duration=duration, distance=distance, altitude_url=altitude_url))
+        return response
     
-    response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name=name, duration=duration, distance=distance, altitude_url=altitude_url))
+    if request.method == 'POST':
+        f = request.files['file']
+        api_key = 'a2bfa0b4f13fb01cec47fd7fa307ff8f'
+        background_url = post_img_file(api_key, f)
+
+        mappa_sql = db.session.query(
+            Mappa.activity_id,
+            Mappa.icon_url,
+            Mappa.name,
+            Mappa.altitude_url
+            ).order_by(Mappa.epoch.desc()).limit(1).all()
+        activity_id = mappa_sql[0][0]
+        icon_url = mappa_sql[0][1]
+        name = mappa_sql[0][2]
+        altitude_url = mappa_sql[0][3]
+        response = make_response(render_template('mappa.html', title='Mappa', icon_url=icon_url, name='', duration='', distance='', altitude_url=altitude_url, background_url=background_url))
+        return response
+    
+    response = make_response(render_template('mappa.html', title='Mappa', icon_url='', name='', duration='', distance='', altitude_url=''))
     return response
 
 
