@@ -22,9 +22,9 @@
 
 </div>
 <div id="buttons">
-  <!-- <button id="save">
+  <button id="save">
     Save as image
-  </button> -->
+  </button>
   <button id="name">
     Name
   </button>
@@ -113,7 +113,7 @@
           stroke: '#666',
           fill: '#ddd',
           strokeWidth: 2,
-          radius: 8,
+          radius: 12,
           name: name,
           draggable: true,
           dragOnTop: false
@@ -164,8 +164,8 @@
         // to do this we need to scale the stage
         var scale = containerWidth / stageWidth;
 
-        stage.width(stageWidth * scale);
-        stage.height(stageHeight * scale);
+        stage.width(stageWidth * scale * 0.95);
+        stage.height(stageHeight * scale * 0.95);
         stage.scale({ x: scale, y: scale });
         stage.draw();
       }
@@ -191,8 +191,8 @@
 
       // background
       var backgroundImg = new Konva.Image({
-        width: 1000,
-        height: 1000
+        width: 950,
+        height: 950
       });
 
       var backgroundGroup = new Konva.Group({
@@ -214,9 +214,10 @@
       addAnchor(darthVaderGroup, 450, 450, 'bottomRight');
       addAnchor(darthVaderGroup, 0, 450, 'bottomLeft');
 
+      // 0, 800
       var yodaGroup = new Konva.Group({
         x: 0,
-        y: 800,
+        y: 775,
         draggable: true
       });
       layer.add(yodaGroup);
@@ -457,11 +458,6 @@
     </script>
   </body>
 </div>
-</div>
-<div id="buttons">
-  <button id="save">
-    Save as image
-  </button>
 </div>
 </div>
 
