@@ -16,30 +16,32 @@
     <p>Here,you can create a custom image with your activity data</p>
     
     <form id="upload_form" action="/updateuser" method="POST" enctype="multipart/form-data">
-      <input type="file" id="fileinput" />
+      <input type="file" id="fileinput" class="btn btn-primary btn-sm"/>
       <img id="source_image" style="height: 0px">
     </form>
 
-</div>
-<div id="buttons">
-  <button id="save">
+
+<div id="buttons" >
+  <p></p>
+  <button id="save" class="btn btn-primary btn-sm">
     Save as image
   </button>
-  <button id="name">
+  <button id="name" class="btn btn-secondary btn-sm">
     Name
   </button>
-  <button id="distance">
+  <button id="distance" class="btn btn-secondary btn-sm">
       Distance
   </button>
-  <button id="duration">
+  <button id="duration" class="btn btn-secondary btn-sm">
       Duration
   </button>
-  <button id="max_speed">
+  <button id="max_speed" class="btn btn-secondary btn-sm">
     Max Speed
   </button>
-  <button id="avg_speed">
+  <button id="avg_speed" class="btn btn-secondary btn-sm">
     Average Speed
   </button>
+</div>
 </div>
 
 <div id="stage-parent">

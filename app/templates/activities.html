@@ -24,17 +24,17 @@
               <button type="submit" class="btn btn-primary">submit</button>
         </form>
     </div>
-
+    <div class="table-responsive">
     <table class="table table-dark table-hover">
       <thead>
         <tr>
-          <th scope="col">ID</th>
+          <!-- <th scope="col">ID</th> -->
           <th scope="col">Route</th>
-          <th scope="col">Elevation</th>
+          <!-- <th scope="col">Elevation</th> -->
           <th scope="col">Date</th>
           <th scope="col">Name</th>
           <th scope="col">Type</th>
-          <th scope="col">Commute</th>
+          <!-- <th scope="col">Commute</th> -->
           <th scope="col">Distance</th>
           <th scope="col">Duration</th>
           <th scope="col"></th>
@@ -43,28 +43,28 @@
       <tbody>
         {% for activity in look_activities %}
         <tr>
-          <td>{{ activity['activity_id'] }}</td>
+          <!-- <td>{{ activity['activity_id'] }}</td> -->
           <td><img src={{ activity['icon_url'] }} height=10%></td>
-          <td><img src={{ activity['altitude_url'] }} height=10%></td>
+          <!-- <td><img src={{ activity['altitude_url'] }} height=10%></td> -->
           <td>{{ activity['activity_date'] }}</td>
           <td>{{ activity['name'] }}</td>
           <td>{{ activity['type'] }}</td>
-          <td>{{ activity['is_commute'] }}</td>
+          <!-- <td>{{ activity['is_commute'] }}</td> -->
           <td>{{ activity['distance'] }}</td>
           <td>{{ activity['duration'] }}</td>
           <td>
             <form method="POST" action="/mappa">
-              <button name="activity_id_mappa" type="submit" value="{{ activity['activity_id'] }}">Mappa</button>
+              <button name="activity_id_mappa" type="submit" value="{{ activity['activity_id'] }}" class="btn btn-secondary btn-sm">Mappa</button>
             </form>
           </td>
           <td>
             <form method="POST" action="/activities">
-              <button name="activity_id_update" type="submit" value="{{ activity['activity_id'] }}">Update</button>
+              <button name="activity_id_update" type="submit" value="{{ activity['activity_id'] }}" class="btn btn-secondary btn-sm">Update</button>
             </form>
           </td>
           <td>
             <form method="POST" action="/activities">
-              <button name="activity_id_delete" type="submit" value="{{ activity['activity_id'] }}">Delete</button>
+              <button name="activity_id_delete" type="submit" value="{{ activity['activity_id'] }}" class="btn btn-secondary btn-sm">Delete</button>
             </form>
           </td>
 
@@ -72,6 +72,7 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
 
 </div>
 </div>
