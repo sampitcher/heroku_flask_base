@@ -16,15 +16,16 @@
     <p>Here,you can create a custom image with your activity data</p>
     
     <form id="upload_form" action="/updateuser" method="POST" enctype="multipart/form-data">
+      <label for="file">Choose file</label>
       <input type="file" id="fileinput" />
-      <img id="source_image" style="height: 0px">
+      <img id="source_image">
     </form>
 
 </div>
 <div id="buttons">
-  <!-- <button id="save">
+  <button id="save">
     Save as image
-  </button> -->
+  </button>
   <button id="name">
     Name
   </button>
@@ -42,9 +43,9 @@
   </button>
 </div>
 
-<div id="stage-parent">
-<div id="container" class="w-100 p-3" role="presentation" style="position: relative; user-select: none; width: 1000; height: 1000;">
-  <canvas class='img-responsive' width="100%" style="padding: 0px; margin: 0px; border: 0px; background: 'black'; position: absolute; top: 0px; left: 0px; width: 1000; height: 1000; display: block;">
+
+<div class="w-100 p-3" role="presentation" style="position: relative; user-select: none; width: 1000; height: 1000;">
+  <canvas class='img-responsive' width="1000" height="1000" style="padding: 0px; margin: 0px; border: 0px; background: 'black'; position: absolute; top: 0px; left: 0px; width: 1000; height: 1000; display: block;">
   </canvas>
 
 
@@ -52,11 +53,39 @@
     <div id="container"></div>
     <script>
 
+    function readFile(evt) {
+	    var file = evt.target.files[0];
+	    var reader = new FileReader();
+	    output_format = "jpg";
+	    reader.onload = function(event) {
+	        var i = document.getElementById("source_image");
+	            i.src = event.target.result;
+	            i.onload = function(){
+	                image_width=$(i).width(),
+	                image_height=$(i).height();
+
+	                if(image_width > image_height){
+	                    i.style.width="320px";
+	                }else{
+	                    i.style.height="300px";
+	                }
+	                i.style.display = "block";
+	                console.log("Image loaded");
+	            }
+	    };
+
+	    console.log("Filename:" + file.name);
+	    console.log("Filesize:" + (parseInt(file.size) / 1024) + " Kb");
+      console.log("Type is:" + file.type);
+      var upload_url = reader.readAsDataURL(file);
+      // reader.readAsDataURL(file);
+      console.log(upload_url)
+
+	    return false;
+	}
+
       var topics = [];
       var topics_clean = [];
-
-      var stageWidth = 1000;
-      var stageHeight = 1000;
 
       var width = window.innerWidth;
       var height = window.innerHeight;
@@ -150,29 +179,9 @@
 
       var stage = new Konva.Stage({
         container: 'container',
-        // width: width,
-        // height: height,
-        width: stageWidth,
-        height: stageHeight
+        width: width,
+        height: height
       });
-
-      function fitStageIntoParentContainer() {
-        var container = document.querySelector('#stage-parent');
-
-        // now we need to fit stage into parent
-        var containerWidth = container.offsetWidth;
-        // to do this we need to scale the stage
-        var scale = containerWidth / stageWidth;
-
-        stage.width(stageWidth * scale);
-        stage.height(stageHeight * scale);
-        stage.scale({ x: scale, y: scale });
-        stage.draw();
-      }
-
-      fitStageIntoParentContainer();
-      // adapt the stage on any window resize
-      window.addEventListener('resize', fitStageIntoParentContainer);
 
       var layer = new Konva.Layer();
       stage.add(layer);
@@ -225,49 +234,65 @@
       addAnchor(yodaGroup, 1000, 0, 'topRight');
       addAnchor(yodaGroup, 1000, 200, 'bottomRight');
       addAnchor(yodaGroup, 0, 200, 'bottomLeft');
+      
+      // var imageObj3 = new Image();
+      // imageObj3.onload = function() {
+      //   backgroundImg.image(imageObj3);
+      //   layer.draw();
+      // };
 
       document.getElementById('fileinput').addEventListener(
         'change',
-        function(evt) {
-          var file = evt.target.files[0];
+        function() {
+          console.log("File Input Starting...");
           var reader = new FileReader();
-          output_format = "jpg";
           reader.onload = function(event) {
-              var i = document.getElementById("source_image");
-                  i.src = event.target.result;
-                  i.onload = function(){
-                      // image_width=$(i).width(),
-                      // image_height=$(i).height();
-
-                      // if(image_width > image_height){
-                      //     i.style.width="0";
-                      // }else{
-                      //     i.style.height="0";
-                      // }
-                      // i.style.display = "block";
-                      // console.log("Image loaded");
-                      // console.log(i.src);
-
-                      var imageObj3 = new Image();
-                      imageObj3.onload = function() {
-                        backgroundImg.image(imageObj3);
-                        layer.draw();
-                      };
-                      // imageObj3.crossOrigin = 'Anonymous';
-                      imageObj3.src = i.src;
-                      
-                  }
+            console.log("Reader Starting...");
+            var dataUri = event.target.result
+              // context = document.getElementById("mycanvas").getContext("2d"),
+            var imageObj3 = new Image();
+ 
+              // wait until the image has been fully processed
+              imageObj3.onload = function() {
+                // context.drawImage(img, 100, 100);
+                backgroundImg.image(imageObj3);
+                layer.draw();
             };
-
-          console.log("Filename:" + file.name);
-          console.log("Filesize:" + (parseInt(file.size) / 1024) + " Kb");
-          console.log("Type:" + file.type);
-          reader.readAsDataURL(file);
-
-          return false;
+            imageObj3.src = dataUri;
+            };
         },
         false
       );
+
+      // var reader = new FileReader();
+      // reader.onload = function(event) {
+      //     console.log("hello!!!")
+      //     document.getElementById('fileinput').addEventListener(
+      //     'change',
+      //     function() {
+      //     console.log("hello!!!");
+      //   },
+      //     false
+      //     );
+      //     var dataUri = event.target.result;
+      //         // context = document.getElementById("mycanvas").getContext("2d"),
+      //     var backround_img = new Image();
+      
+      //     // wait until the image has been fully processed
+      //     backround_img.onload = function() {
+      //         context.drawImage(backround_img, 1000, 1000);
+      //     };
+      //     backround_img.src = dataUri;
+      // };
+
+      reader.onerror = function(event) {
+          console.error("File could not be read! Code " + event.target.error.code);
+      };
+
+      reader.readAsDataURL(file);
+      
+      imageObj3.crossOrigin = 'Anonymous';
+      // imageObj3.src = {{background_url}};
 
       var imageObj1 = new Image();
       imageObj1.onload = function() {
@@ -457,13 +482,6 @@
     </script>
   </body>
 </div>
-</div>
-<div id="buttons">
-  <button id="save">
-    Save as image
-  </button>
-</div>
-</div>
 
 {{name}}
 {{icon_url}}
@@ -479,34 +497,3 @@
 {{distance}}
 
 {% endblock %}
-
-<!-- 
-// function readFile(evt) {
-  //   var file = evt.target.files[0];
-  //   var reader = new FileReader();
-  //   output_format = "jpg";
-  //   reader.onload = function(event) {
-  //       var i = document.getElementById("source_image");
-  //           i.src = event.target.result;
-  //           i.onload = function(){
-  //               image_width=$(i).width(),
-  //               image_height=$(i).height();
-
-  //               if(image_width > image_height){
-  //                   i.style.width="320px";
-  //               }else{
-  //                   i.style.height="300px";
-  //               }
-  //               i.style.display = "block";
-  //               console.log("Image loaded");
-  //               console.log(i.src);
-  //           }
-  //     };
-
-  //   console.log("Filename:" + file.name);
-  //   console.log("Filesize:" + (parseInt(file.size) / 1024) + " Kb");
-  //   console.log("Type:" + file.type);
-  //   reader.readAsDataURL(file);
-
-  //   return false;
-  //   } -->

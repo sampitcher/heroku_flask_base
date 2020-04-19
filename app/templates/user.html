@@ -8,7 +8,7 @@
     <!-- <p><a href="{{ url_for('sync') }}">sync data</a></p> -->
     {% endif %}
 
-    <table>
+    <!-- <table>
         <tr>
             <th>Firstname</th>
             <th>Lastname</th>
@@ -24,22 +24,16 @@
             <td>Jackson</td>
             <td>94</td>
         </tr>
-    </table>
+    </table> -->
     
-    <div id="Container" style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
+    <!-- <div id="Container" style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
         <iframe id="looker"
             width="90%" height="900px"
             src={{embed_url}}
             frameborder="0" allowfullscreen=""
             style="position:relative; top:0; left: 0">
         </iframe>
-    </div>
-
-    <p>Add missing activity:</p>
-    <form method="POST" action="/get_activity">
-        <input type="text" placeholder="activity id" name="activity_id"/>
-        <button>add activity</button>
-    </form>
+    </div> -->
 
     <p>Strava Connection Details:</p>
     <p>User strava code: {{ user.strava_code }} </p>
