@@ -252,12 +252,19 @@
                       // console.log(i.src);
 
                       var imageObj3 = new Image();
+                      // var crop = imageObj3.crop();
                       imageObj3.onload = function() {
                         backgroundImg.image(imageObj3);
                         layer.draw();
                       };
                       // imageObj3.crossOrigin = 'Anonymous';
                       imageObj3.src = i.src;
+                      // imageObj3.crop({
+                      //     x: 0,
+                      //     y: 0,
+                      //     width: 200,
+                      //     height: 200
+                      //   });
                       
                   }
             };
