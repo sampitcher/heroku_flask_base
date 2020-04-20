@@ -318,16 +318,45 @@
 
       function addText() {
         text_layer.destroy();
-          var simpleText = new Konva.Text({
-            x: stage.width() / 2,
-            y: 40,
+          // var simpleText = new Konva.Text({
+          //   x: stage.width() / 2,
+          //   y: 40,
+          //   draggable: true,
+          //   text: topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""),
+          //   fontSize: 40,
+          //   fontFamily: 'Arial',
+          //   fill: 'white',
+          // });
+          // text_layer.add(simpleText);
+          // stage.add(text_layer);
+          var simpleLabel = new Konva.Label({
+            x: 80,
+            y: 80,
             draggable: true,
-            text: topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""),
+          });
+
+          simpleLabel.add(
+            new Konva.Tag({
+              fill: '#e8f4f8',
+              stroke: '#286e84',
+              opacity: 0.45
+            })
+          );
+
+          var topics_text = topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
+          var topics_text = topics_text.substring(0, topics_text.length - 1);
+          simpleLabel.add(
+            new Konva.Text({
+            text: topics_text,
             fontSize: 40,
             fontFamily: 'Arial',
             fill: 'white',
-          });
-          text_layer.add(simpleText);
+            padding: 10,
+            opacity: 1,
+          })
+          );
+
+          text_layer.add(simpleLabel);
           stage.add(text_layer);
         }
 
