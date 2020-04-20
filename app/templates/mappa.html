@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>Mappa</h2>
+    <!-- <h2>Mappa</h2> -->
 
     {% if current_user.is_anonymous %}
 
@@ -12,8 +12,6 @@
     {% else %}
 
     {% endif %}
-
-    <p>Here you can create a custom image with your activity data. Choose a photo to upload and click the info buttons to add data to your image!</p>
     
     <form id="upload_form" action="/updateuser" method="POST" enctype="multipart/form-data">
       <input type="file" id="fileinput" class="btn btn-primary btn-sm"/>
@@ -469,6 +467,8 @@
 </div>
 </div>
 </div>
+
+<p>Here you can create a custom image with your activity data. Choose a photo to upload and click the info buttons to add data to your image!</p>
 
 {{name}}
 {{icon_url}}
