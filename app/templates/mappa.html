@@ -13,7 +13,7 @@
 
     {% endif %}
 
-    <p>Here,you can create a custom image with your activity data</p>
+    <p>Here you can create a custom image with your activity data. Choose a photo to upload and click the info buttons to add data to your image!</p>
     
     <form id="upload_form" action="/updateuser" method="POST" enctype="multipart/form-data">
       <input type="file" id="fileinput" class="btn btn-primary btn-sm"/>
@@ -23,9 +23,6 @@
 
 <div id="buttons" >
   <p></p>
-  <button id="save" class="btn btn-primary btn-sm">
-    Save as image
-  </button>
   <button id="name" class="btn btn-secondary btn-sm">
     Name
   </button>
@@ -41,6 +38,15 @@
   <button id="avg_speed" class="btn btn-secondary btn-sm">
     Average Speed
   </button>
+  <p></p>
+  <p>
+    <button id="rotate_background" class="btn btn-secondary btn-sm">
+      Rotate Background
+    </button>
+    <button id="save" class="btn btn-primary btn-sm">
+      Save as image
+    </button>
+  </p>
 </div>
 </div>
 
@@ -152,8 +158,6 @@
 
       var stage = new Konva.Stage({
         container: 'container',
-        // width: width,
-        // height: height,
         width: stageWidth,
         height: stageHeight
       });
@@ -180,13 +184,13 @@
       stage.add(layer);
 
       // darth vader - route
-      var darthVaderImg = new Konva.Image({
+      var routeImg = new Konva.Image({
         width: 400,
         height: 400
       });
 
       // yoda - elevation
-      var yodaImg = new Konva.Image({
+      var elevationImg = new Konva.Image({
         width: 1000,
         height: 200
       });
@@ -199,35 +203,52 @@
 
       var backgroundGroup = new Konva.Group({
         x: 0,
-        y: 0
+        y: 0,
+        name: 'background_group'
       });
       layer.add(backgroundGroup);
       backgroundGroup.add(backgroundImg);
 
-      var darthVaderGroup = new Konva.Group({
+      var routeGroup = new Konva.Group({
         x: 50,
         y: 550,
         draggable: true
       });
-      layer.add(darthVaderGroup);
-      darthVaderGroup.add(darthVaderImg);
-      addAnchor(darthVaderGroup, 0, 0, 'topLeft');
-      addAnchor(darthVaderGroup, 450, 0, 'topRight');
-      addAnchor(darthVaderGroup, 450, 450, 'bottomRight');
-      addAnchor(darthVaderGroup, 0, 450, 'bottomLeft');
+      layer.add(routeGroup);
+      routeGroup.add(routeImg);
+      addAnchor(routeGroup, 0, 0, 'topLeft');
+      addAnchor(routeGroup, 450, 0, 'topRight');
+      addAnchor(routeGroup, 450, 450, 'bottomRight');
+      addAnchor(routeGroup, 0, 450, 'bottomLeft');
 
       // 0, 800
-      var yodaGroup = new Konva.Group({
+      var elevationGroup = new Konva.Group({
         x: 0,
         y: 775,
         draggable: true
       });
-      layer.add(yodaGroup);
-      yodaGroup.add(yodaImg);
-      addAnchor(yodaGroup, 0, 0, 'topLeft');
-      addAnchor(yodaGroup, 1000, 0, 'topRight');
-      addAnchor(yodaGroup, 1000, 200, 'bottomRight');
-      addAnchor(yodaGroup, 0, 200, 'bottomLeft');
+      layer.add(elevationGroup);
+      elevationGroup.add(elevationImg);
+      addAnchor(elevationGroup, 0, 0, 'topLeft');
+      addAnchor(elevationGroup, 1000, 0, 'topRight');
+      addAnchor(elevationGroup, 1000, 200, 'bottomRight');
+      addAnchor(elevationGroup, 0, 200, 'bottomLeft');
+
+      var imageObj1 = new Image();
+      imageObj1.onload = function() {
+        routeImg.image(imageObj1);
+        layer.draw();
+      };
+      imageObj1.crossOrigin = 'Anonymous';
+      imageObj1.src = '{{icon_url}}';
+
+      var imageObj2 = new Image();
+      imageObj2.onload = function() {
+        elevationImg.image(imageObj2);
+        layer.draw();
+      };
+      imageObj2.crossOrigin = 'Anonymous';
+      imageObj2.src = '{{altitude_url}}';
 
       document.getElementById('fileinput').addEventListener(
         'change',
@@ -237,37 +258,18 @@
           output_format = "jpg";
           reader.onload = function(event) {
               var i = document.getElementById("source_image");
-                  i.src = event.target.result;
-                  i.onload = function(){
-                      // image_width=$(i).width(),
-                      // image_height=$(i).height();
-
-                      // if(image_width > image_height){
-                      //     i.style.width="0";
-                      // }else{
-                      //     i.style.height="0";
-                      // }
-                      // i.style.display = "block";
-                      // console.log("Image loaded");
-                      // console.log(i.src);
-
-                      var imageObj3 = new Image();
-                      // var crop = imageObj3.crop();
-                      imageObj3.onload = function() {
-                        backgroundImg.image(imageObj3);
-                        layer.draw();
-                      };
-                      // imageObj3.crossOrigin = 'Anonymous';
-                      imageObj3.src = i.src;
-                      // imageObj3.crop({
-                      //     x: 0,
-                      //     y: 0,
-                      //     width: 200,
-                      //     height: 200
-                      //   });
-                      
-                  }
-            };
+              i.src = event.target.result;
+              i.onload = function(){
+                var imageObj3 = new Image();
+                imageObj3.onload = function() {
+                backgroundImg.image(imageObj3);
+                layer.draw();
+                };
+              imageObj3.src = i.src;
+              return imageObj3
+              },
+              false
+              };
 
           console.log("Filename:" + file.name);
           console.log("Filesize:" + (parseInt(file.size) / 1024) + " Kb");
@@ -279,56 +281,25 @@
         false
       );
 
-      var imageObj1 = new Image();
-      imageObj1.onload = function() {
-        darthVaderImg.image(imageObj1);
-        layer.draw();
-      };
-      imageObj1.crossOrigin = 'Anonymous';
-      imageObj1.src = '{{icon_url}}';
-
-      var imageObj2 = new Image();
-      imageObj2.onload = function() {
-        yodaImg.image(imageObj2);
-        layer.draw();
-      };
-      imageObj2.crossOrigin = 'Anonymous';
-      imageObj2.src = '{{altitude_url}}';
+      document.getElementById('rotate_background').addEventListener(
+        'click',
+        function() {
+          console.log(backgroundImg)
+          backgroundImg.rotate(90);
+          backgroundImg.offsetX(500);
+          backgroundImg.offsetY(500);
+          backgroundImg.setX(500);
+          backgroundImg.setY(500);
+          stage.draw();
+          console.log('loaded');
+        },
+        false
+      );
 
       var text_layer = new Konva.Layer();
 
-      function addTextOld() {
-        text_layer.destroy();
-        
-        for (i = 0, len = topics.length, text = ""; i < len; i++) {
-          var topic = topics[i];
-          var simpleText = new Konva.Text({
-            x: stage.width() / 2,
-            y: 40 + i*50,
-            text: topics_clean[i],
-            fontSize: 40,
-            fontFamily: 'Arial',
-            fill: 'white',
-          });
-          text_layer.add(simpleText);
-          textGroup.add(text_layer);
-        }
-        stage.add(text_layer);
-      }
-
       function addText() {
         text_layer.destroy();
-          // var simpleText = new Konva.Text({
-          //   x: stage.width() / 2,
-          //   y: 40,
-          //   draggable: true,
-          //   text: topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""),
-          //   fontSize: 40,
-          //   fontFamily: 'Arial',
-          //   fill: 'white',
-          // });
-          // text_layer.add(simpleText);
-          // stage.add(text_layer);
           var simpleLabel = new Konva.Label({
             x: 80,
             y: 80,
@@ -378,8 +349,8 @@
       document.getElementById('save').addEventListener(
         'click',
         function() {
-          yodaGroup.find('Circle').hide();
-          darthVaderGroup.find('Circle').hide();
+          elevationGroup.find('Circle').hide();
+          routeGroup.find('Circle').hide();
           var dataURL = stage.toDataURL({ pixelRatio: 6 });
           console.log(dataURL);
           downloadURI(dataURL, 'mappa_image.png');
@@ -544,3 +515,53 @@
 
   //   return false;
   //   } -->
+
+  <!-- document.getElementById('fileinput').addEventListener(
+    'change',
+    function(evt) {
+      var file = evt.target.files[0];
+      var reader = new FileReader();
+      output_format = "jpg";
+      reader.onload = function(event) {
+          var i = document.getElementById("source_image");
+              i.src = event.target.result;
+              i.onload = function(){
+                  // image_width=$(i).width(),
+                  // image_height=$(i).height();
+
+                  // if(image_width > image_height){
+                  //     i.style.width="0";
+                  // }else{
+                  //     i.style.height="0";
+                  // }
+                  // i.style.display = "block";
+                  // console.log("Image loaded");
+                  // console.log(i.src);
+
+                  var imageObj3 = new Image();
+                  // var crop = imageObj3.crop();
+                  imageObj3.onload = function() {
+                    backgroundImg.image(imageObj3);
+                    layer.draw();
+                  };
+                  // imageObj3.crossOrigin = 'Anonymous';
+                  imageObj3.src = i.src;
+                  // imageObj3.crop({
+                  //     x: 0,
+                  //     y: 0,
+                  //     width: 200,
+                  //     height: 200
+                  //   });
+                  
+              }
+        };
+
+      console.log("Filename:" + file.name);
+      console.log("Filesize:" + (parseInt(file.size) / 1024) + " Kb");
+      console.log("Type:" + file.type);
+      reader.readAsDataURL(file);
+
+      return false;
+    },
+    false
+  ); -->
