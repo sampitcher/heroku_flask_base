@@ -14,7 +14,12 @@
 
     {% endif %}
 
-    ADD ACTIVITY USING ID
+    <a href="{{ url_for('sync') }}">
+      <button type="submit" class="btn btn-primary btn-lg">Update Activities</button>
+    </a>
+    <p>Updating the Activities will add one more to the list.</p>
+
+    <!-- ADD ACTIVITY USING ID
     <div class="container-fluid">
         <form method="POST" action="/activities">
               <div class="form-group">
@@ -23,7 +28,7 @@
               </div>
               <button type="submit" class="btn btn-primary">submit</button>
         </form>
-    </div>
+    </div> -->
     <div class="table-responsive">
     <table class="table table-dark table-hover">
       <thead>

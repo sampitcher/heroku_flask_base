@@ -313,10 +313,11 @@ def sync():
     sync_activities()
 
     username = current_user.username
-    location = "dashboards/7"
-    embed_url = generate_embed_url(username, location)
+    # location = "dashboards/7"
+    # embed_url = generate_embed_url(username, location)
 
-    return render_template("activities.html", user=user, embed_url=embed_url)
+    # return render_template("activities.html", user=user, embed_url=embed_url)
+    return redirect(url_for('activities'))
 
 @app.route('/sync_activity_id', methods = ['GET', 'POST'])
 @login_required
