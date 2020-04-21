@@ -193,6 +193,27 @@
         height: 200
       });
 
+      // init_background
+      var initBackgroundImg = new Konva.Image({
+        width: 950,
+        height: 950
+      });
+
+      var initBackgroundGroup = new Konva.Group({
+        x: 0,
+        y: 0,
+      });
+      layer.add(initBackgroundGroup);
+      initBackgroundGroup.add(initBackgroundImg);
+
+      var imageObj0 = new Image();
+      imageObj0.onload = function() {
+        initBackgroundImg.image(imageObj0);
+        layer.draw();
+      };
+      imageObj0.crossOrigin = 'Anonymous';
+      imageObj0.src = 'https://i.ibb.co/TqrrvJJ/mappa-init-back.png';
+
       // background
       var backgroundImg = new Konva.Image({
         width: 950,
