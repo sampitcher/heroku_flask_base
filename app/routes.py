@@ -469,12 +469,12 @@ def mappa():
         duration = 'Duration: '+str(time.strftime('%H:%M:%S', time.gmtime(int(duration_raw))))
         distance = 'Distance: '+str(round(float(activities_sql[0][4]) / 1000, 2))+' km'
         altitude_url = activities_sql[0][5]
-        max_speed = 'Max Speed: '+str(float(activities_sql[0][6]) * 3.6)+' km/h'
-        avg_speed = 'Avg Speed: '+str(float(activities_sql[0][7]) * 3.6)+' km/h'
-        max_power = activities_sql[0][8]
-        avg_power = activities_sql[0][9]
-        max_heartrate = activities_sql[0][10]
-        avg_heartrate = activities_sql[0][11]
+        max_speed = 'Max Speed: '+str(round(float(activities_sql[0][6]) * 3.6, 2))+' km/h'
+        avg_speed = 'Avg Speed: '+str(round(float(activities_sql[0][7]) * 3.6, 2))+' km/h'
+        max_power = 'Max Power: '+str(activities_sql[0][8])+' watts'
+        avg_power = 'Avg Power: '+str(activities_sql[0][9])+' watts'
+        max_heartrate = 'Max HR: '+str(round(float(activities_sql[0][10]),0))[:-2]+' bpm'
+        avg_heartrate = 'Avg HR: '+str(round(float(activities_sql[0][11]),0))[:-2]+' bpm'
 
         mappa_image = Mappa(
             activity_id=activity_id_mappa,

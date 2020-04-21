@@ -36,6 +36,18 @@
   <button id="avg_speed" class="btn btn-secondary btn-sm">
     Average Speed
   </button>
+  <button id="max_power" class="btn btn-secondary btn-sm">
+    Max Power
+  </button>
+  <button id="avg_power" class="btn btn-secondary btn-sm">
+    Average Power
+  </button>
+  <button id="max_hr" class="btn btn-secondary btn-sm">
+    Max HR
+  </button>
+  <button id="avg_hr" class="btn btn-secondary btn-sm">
+    Average HR
+  </button>
   <p></p>
   <p>
     <button id="rotate_background" class="btn btn-secondary btn-sm">
@@ -358,7 +370,7 @@
             })
           );
 
-          var topics_text = topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
+          var topics_text = topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
           var topics_text = topics_text.substring(0, topics_text.length - 1);
           simpleLabel.add(
             new Konva.Text({
@@ -500,6 +512,90 @@
             // add to the topics array
             topics.push("duration")
             topics_clean.push('{{duration}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('max_power').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('max_power');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("max_power")
+            topics_clean.push('{{max_power}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('avg_power').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('avg_power');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("avg_power")
+            topics_clean.push('{{avg_power}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('max_hr').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('max_hr');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("max_hr")
+            topics_clean.push('{{max_heartrate}}\n')
+          }
+          console.log('adding data');
+          console.log(topics);
+          addText();
+        },
+        false
+      );
+
+      document.getElementById('avg_hr').addEventListener(
+        'click',
+        function() {
+          var index = topics.indexOf('avg_hr');
+          if (index > -1) {
+            // remove from the topics array
+            topics.splice(index, 1);
+            topics_clean.splice(index, 1);
+          }
+          else {
+            // add to the topics array
+            topics.push("avg_hr")
+            topics_clean.push('{{avg_heartrate}}\n')
           }
           console.log('adding data');
           console.log(topics);

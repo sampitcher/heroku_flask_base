@@ -225,7 +225,7 @@ def clean_raw_activities(i):
     except:
         max_speed = 0
     try:
-        avg_speed = i['avg_speed']
+        avg_speed = i['average_speed']
     except:
         avg_speed = 0
 
@@ -234,7 +234,7 @@ def clean_raw_activities(i):
     except:
         max_power = 0
     try:
-        avg_power = i['avg_power']
+        avg_power = i['average_power']
     except:
         avg_power = 0
 
@@ -243,7 +243,7 @@ def clean_raw_activities(i):
     except:
         max_heartrate = 0
     try:
-        avg_heartrate = i['avg_heartrate']
+        avg_heartrate = i['average_heartrate']
     except:
         avg_heartrate = 0
 
