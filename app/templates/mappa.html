@@ -50,6 +50,9 @@
   </button>
   <p></p>
   <p>
+    <button id="rotate_route" class="btn btn-secondary btn-sm">
+      Rotate Route
+    </button>
     <button id="rotate_background" class="btn btn-secondary btn-sm">
       Rotate Background
     </button>
@@ -348,6 +351,21 @@
           backgroundImg.setY(475);
           stage.draw();
           console.log('loaded');
+        },
+        false
+      );
+
+      document.getElementById('rotate_route').addEventListener(
+        'click',
+        function() {
+          console.log(routeImg)
+          routeImg.rotate(45);
+          routeImg.offsetX(200);
+          routeImg.offsetY(200);
+          routeImg.setX(200);
+          routeImg.setY(200);
+          stage.draw();
+          console.log('rotated route');
         },
         false
       );
