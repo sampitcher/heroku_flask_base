@@ -211,15 +211,16 @@ def update_activity(activity_id=None):
 @app.route('/index')
 @login_required
 def index():
-    username = current_user.username
-    location = "dashboards/7"
-    embed_url = generate_embed_url(username, location)
-    resp = make_response(render_template('index.html', title='Home', embed_url=embed_url))
-    resp.headers.add('Access-Control-Allow-Origin', 'http://pitcherpakeman001.lookersandbox.com')
-    resp.headers.add('Access-Control-Allow-Credentials', 'true')
-    resp.set_cookie('strava-pitcherpakeman-test', value='this is a test', domain=".lookersandbox.com", samesite=None)
-    print(resp)
-    return resp
+    # username = current_user.username
+    # location = "dashboards/7"
+    # embed_url = generate_embed_url(username, location)
+    # resp = make_response(render_template('index.html', title='Home', embed_url=embed_url))
+    # resp.headers.add('Access-Control-Allow-Origin', 'http://pitcherpakeman001.lookersandbox.com')
+    # resp.headers.add('Access-Control-Allow-Credentials', 'true')
+    # resp.set_cookie('strava-pitcherpakeman-test', value='this is a test', domain=".lookersandbox.com", samesite=None)
+    # print(resp)
+    # return resp
+    return redirect(url_for('activities'))
 
 #######################
 # USER SIGN-IN ROUTES #

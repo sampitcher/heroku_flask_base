@@ -14,10 +14,23 @@
 
     {% endif %}
 
+    {% if current_user.strava_code is none %}
+
+    <p>
+        <!-- CONNECT TO STRAVA HEROKU -->
+    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">
+    <img src="../static/images/connect_with_strava.png" width="15%">
+    </a>
+    </p>
+
+    {% else %}
+
     <a href="{{ url_for('sync') }}">
       <button type="submit" class="btn btn-primary btn-lg">Update Activities</button>
     </a>
     <p>Updating the Activities will add one more to the list.</p>
+
+    {% endif %}
 
     <!-- ADD ACTIVITY USING ID
     <div class="container-fluid">
