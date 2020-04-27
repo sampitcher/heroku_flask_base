@@ -50,6 +50,9 @@
   </button>
   <p></p>
   <p>
+    <button id="change_text" class="btn btn-secondary btn-sm">
+      Change Text
+    </button>
     <button id="rotate_route" class="btn btn-secondary btn-sm">
       Rotate Route
     </button>
@@ -85,6 +88,9 @@
 
       var topics = [];
       var topics_clean = [];
+      var topics_inline = [];
+
+      var text_type = ['clean'];
 
       var stageWidth = 1000;
       var stageHeight = 1000;
@@ -382,8 +388,9 @@
 
       var text_layer = new Konva.Layer();
 
-      function addText() {
+      function addText(text_type='clean') {
         text_layer.destroy();
+        if (text_type == 'clean') {
           var simpleLabel = new Konva.Label({
             x: 80,
             y: 80,
@@ -392,24 +399,57 @@
 
           simpleLabel.add(
             new Konva.Tag({
-              fill: '#e8f4f8',
-              stroke: '#286e84',
-              opacity: 0.45
+              fill: '#808080',
+              stroke: '#A9A9A9',
+              opacity: 0.7
             })
           );
 
-          var topics_text = topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
-          var topics_text = topics_text.substring(0, topics_text.length - 1);
-          simpleLabel.add(
+            var topics_text = topics_clean.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
+            var topics_text = topics_text.substring(0, topics_text.length - 1);
+
+            simpleLabel.add(
             new Konva.Text({
             text: topics_text,
-            fontSize: 40,
+            fontSize: 35,
             fontFamily: 'sans-serif',
             fill: 'white',
             padding: 10,
             opacity: 1,
           })
           );
+          }
+          else {
+            var simpleLabel = new Konva.Label({
+            x: 0,
+            y: 875,
+            
+            draggable: true,
+          });
+
+          simpleLabel.add(
+            new Konva.Tag({
+              fill: '#808080',
+              stroke: '#A9A9A9',
+              opacity: 0.7
+            })
+          );
+            var topics_text = topics_inline.join().replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "");
+            var topics_text = topics_text.substring(0, topics_text.length - 4);
+          
+          simpleLabel.add(
+            new Konva.Text({
+            text: topics_text,
+            fontSize: 25,
+            fontFamily: 'sans-serif',
+            fill: 'white',
+            padding: 25,
+            opacity: 1,
+            width: 1000,
+            align: 'center'
+          })
+          );
+          }
 
           text_layer.add(simpleLabel);
           stage.add(text_layer);
@@ -450,16 +490,18 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("name")
             topics_clean.push('{{name}}\n')
+            topics_inline.push('{{name}} >> ')
           }
           console.log('adding data');
           console.log(topics);
           console.log(topics_clean);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -472,15 +514,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("max_speed")
-            topics_clean.push('{{max_speed}}\n')
+            topics_clean.push('Max Speed: {{max_speed}}\n')
+            topics_inline.push('MAX {{max_speed}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -493,15 +537,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("avg_speed")
-            topics_clean.push('{{avg_speed}}\n')
+            topics_clean.push('Average Speed: {{avg_speed}}\n')
+            topics_inline.push('AVG {{avg_speed}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -514,15 +560,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("distance")
-            topics_clean.push('{{distance}}\n')
+            topics_clean.push('Distance: {{distance}}\n')
+            topics_inline.push('{{distance}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -535,15 +583,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("duration")
-            topics_clean.push('{{duration}}\n')
+            topics_clean.push('Duration: {{duration}}\n')
+            topics_inline.push('{{duration}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -556,15 +606,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("max_power")
-            topics_clean.push('{{max_power}}\n')
+            topics_clean.push('Max Power: {{max_power}}\n')
+            topics_inline.push('MAX {{max_power}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -577,15 +629,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("avg_power")
-            topics_clean.push('{{avg_power}}\n')
+            topics_clean.push('Average Power: {{avg_power}}\n')
+            topics_inline.push('AVG {{avg_power}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -598,15 +652,17 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("max_hr")
-            topics_clean.push('{{max_heartrate}}\n')
+            topics_clean.push('Max HR: {{max_heartrate}}\n')
+            topics_inline.push('MAX {{max_heartrate}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
         },
         false
       );
@@ -619,15 +675,36 @@
             // remove from the topics array
             topics.splice(index, 1);
             topics_clean.splice(index, 1);
+            topics_inline.splice(index, 1);
           }
           else {
             // add to the topics array
             topics.push("avg_hr")
-            topics_clean.push('{{avg_heartrate}}\n')
+            topics_clean.push('Average HR: {{avg_heartrate}}\n')
+            topics_inline.push('AVG {{avg_heartrate}} >> ')
           }
           console.log('adding data');
           console.log(topics);
-          addText();
+          addText(text_type[0]);
+        },
+        false
+      );
+
+      document.getElementById('change_text').addEventListener(
+        'click',
+        function() {
+          var index = text_type.indexOf('clean');
+          if (index > -1) {
+            // remove from the topics array
+            text_type.splice(index, 1);
+            text_type.push('inline');
+            addText('inline');
+          }
+          else {
+            text_type.splice(index, 1);
+            text_type.push('clean');
+            addText('clean');
+          }
         },
         false
       );
