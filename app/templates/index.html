@@ -2,55 +2,12 @@
 
 {% block content %}
 <div class="text-center">
-    <h2>strava summary</h2>
-
-    {% if current_user.is_anonymous %}
-
-    <p>Please login to use the app</p>
-    <a href="{{ url_for('login') }}">login</a>
-
-    {% else %}
-
-        {% if current_user.strava_code is none %}
+    <h2>Heroku Flask Base</h2>
 
     <p>
-        <!-- CONNECT TO STRAVA HEROKU -->
-    <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://strava-heroku.herokuapp.com/getstravacode&response_type=code&scope=activity:read_all,profile:read_all,read_all">
-    <img src="../static/images/connect_with_strava.png" width="15%">
-    </a>
-    </p>
-    
-            {% if current_user.username == 'test-sam' %}
-
-    <p>
-        <!-- CONNECT TO STRAVA LOCAL -->
-    LOCAL_TEST: <a href="https://www.strava.com/oauth/authorize?client_id=32114&redirect_uri=http://localhost:5000/getstravacode&response_type=code&scope=activity:read_all,activity:write,profile:read_all,read_all">
-    <img src="../static/images/connect_with_strava.png" width="15%">
-    </a>
+        Welcome to the Base App.
     </p>
 
-            {% else %}
-
-            {% endif %}
-
-        {% else %}
-
-        {% endif %}
-
-    <!-- <div id="Container"
-        style="padding-bottom:56.25%; position:relative; display:block; width: 100%">
-        <iframe id="looker"
-        width="90%" height="900px"
-        src={{embed_url}}
-        frameborder="0" allowfullscreen=""
-        style="position:relative; top:0; left: 0"></iframe>
-    </div> -->
-
-    <div>
-        Welcome to the Strava App.
-    </div>
-
-    {% endif %}
 </div>
 
 {% endblock %}

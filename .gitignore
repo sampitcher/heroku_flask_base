@@ -5,3 +5,4 @@ app/__pycache__
 app/__pycache__/*
 /.mypy_cache/*
 /.vscode/*
+migrations/__pycache__/*
