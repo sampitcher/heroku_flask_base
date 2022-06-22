@@ -18,7 +18,7 @@ kiwisolver==1.1.0
 Mako==1.0.12
 MarkupSafe==1.1.1
 matplotlib==3.2.1
-numpy==1.16.4
+numpy==1.22.0
 pandas==0.24.2
 psycopg2-binary==2.8.3
 psycopg2==2.8.3
